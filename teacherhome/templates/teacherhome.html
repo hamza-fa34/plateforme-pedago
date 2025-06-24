@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE-edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Academia</title>
+    <title>Tableau de bord - Plateforme Pédagogique</title>
     {% load static %}
     <link rel="icon" type="image/x-icon" href="{% static 'logo.png' %}">
     {% load static %}
@@ -18,11 +18,11 @@
         <div id="dummy">
             <h1 id="hello">
                 {% with profile.name as username %}
-                    Hi {% if request.user.is_authenticated %} {{ username }} {% else %} Not Found {% endif %} !
+                    Bonjour {% if request.user.is_authenticated %} {{ username }} {% else %} Inconnu {% endif %} !
                 {% endwith %}
                 {% if profile.teacher_id %}
                     <h4 style="float: left; margin-top: 55px; font-family: 'DM Serif Display', serif; color: #383737;">
-                        Teacher ID: <h4 style="float: left; margin-top: 55px; font-family: 'DM Serif Display', serif; color: #fffafa; padding-left: 5px">{{ profile.teacher_id }}</h4>
+                        ID Enseignant : <h4 style="float: left; margin-top: 55px; font-family: 'DM Serif Display', serif; color: #fffafa; padding-left: 5px">{{ profile.teacher_id }}</h4>
                     </h4>
                 {% endif %}
             </h1>
@@ -43,7 +43,7 @@
                 <table style="width: 100%; border-spacing: 10px;padding-left: 15px;">
                     <thead style="background-color: #ff9c4f; color: #383737;">
                         <tr>
-                            <th style="padding: 10px;border-radius: 15px;font-size: large;">File Name</th>
+                            <th style="padding: 10px;border-radius: 15px;font-size: large;">Nom du fichier</th>
                             <th style="padding: 10px;border-radius: 15px;font-size: large;">Permission</th>
                             <th style="padding: 10px;border-radius: 15px;font-size: large;">Action</th>
                         </tr>
@@ -55,15 +55,15 @@
                                 <td><a href="{% url 'download_file' file.id %}" style="color: black;text-decoration: none;float: left;padding-left: 20px;">{{ file.file.name|get_file_name }}</a></td>
                                 <td>
                                     {% if file.permission %}
-                                        Public
+                                        Publique
                                     {% else %}
-                                        Private
+                                        Privée
                                     {% endif %}
                                 </td>
                                 <td>
-                                    <form method="post" action="{% url 'delete_file' file.id %}" onsubmit="return confirm('Are you sure you want to delete this file?');">
+                                    <form method="post" action="{% url 'delete_file' file.id %}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce fichier ?');">
                                         {% csrf_token %}
-                                        <button type="submit" style="font-family: 'DM Serif Display', serif;background-color:#c73a2b;color:#ffffff;border-radius: 20px;font-weight: bold; padding: 3px 20px;">Delete</button>
+                                        <button type="submit" style="font-family: 'DM Serif Display', serif;background-color:#c73a2b;color:#ffffff;border-radius: 20px;font-weight: bold; padding: 3px 20px;">Supprimer</button>
                                     </form>
                                 </td>
                             </tr>
@@ -84,30 +84,30 @@
                     {% csrf_token %}
                     
                     <!-- Email Field (automatically populated with the logged-in user's email) -->
-                    <label style="font-family: 'DM Serif Display', serif;" for="email">Email:</label>
+                    <label style="font-family: 'DM Serif Display', serif;" for="email">Email :</label>
                     <input type="text" name="email" value="{% if request.user.is_authenticated %}{{ request.user.email }}{% endif %}" readonly>
                     <br>
                     <!-- File Input -->
-                    <label style="font-family: 'DM Serif Display', serif;" for="file">Upload File:</label>
+                    <label style="font-family: 'DM Serif Display', serif;" for="file">Téléverser un fichier :</label>
                     <input type="file" name="file" required>
                     
                     <!-- Permission Dropdown -->
-                    <label style="font-family: 'DM Serif Display', serif;" for="permission">Permission:</label>
+                    <label style="font-family: 'DM Serif Display', serif;" for="permission">Permission :</label>
                     <select name="permission">
-                        <option value="0">No Permission</option>
-                        <option value="1">Allow Permission</option>
+                        <option value="0">Privée</option>
+                        <option value="1">Publique</option>
                     </select>
                     
                     <!-- Submit Button -->
-                    <button style="font-family: 'DM Serif Display', serif; background-color: #c73a2b; color: #ffffff; border-radius: 10px; padding: 3px;" type="submit">Upload</button>
+                    <button style="font-family: 'DM Serif Display', serif; background-color: #c73a2b; color: #ffffff; border-radius: 10px; padding: 3px;" type="submit">Téléverser</button>
                 </form>
 
                 <!-- Remove <br> tags for spacing -->
 
                 <form method="get" action="">
-                    <label style="font-family: 'DM Serif Display', serif;" for="search">Search:</label>
+                    <label style="font-family: 'DM Serif Display', serif;" for="search">Rechercher :</label>
                     <input type="text" style="font-family: 'DM Serif Display', serif; border-radius: 10px; padding: 3px 10px; margin: 10px;" name="search">
-                    <button style="font-family: 'DM Serif Display', serif; background-color: #c73a2b; color: #ffffff; border-radius: 10px; padding: 3px;" type="submit">Search</button>
+                    <button style="font-family: 'DM Serif Display', serif; background-color: #c73a2b; color: #ffffff; border-radius: 10px; padding: 3px;" type="submit">Rechercher</button>
                 </form>
             </div>
         </div>

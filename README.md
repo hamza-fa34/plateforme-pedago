@@ -1,10 +1,12 @@
-# ```Academia - Campus Repository : Django 📔```
+# Plateforme Pédagogique
+
+> Ce projet est un fork et une adaptation de [Academia Campus Repository](https://github.com/VishalTheHuman/Academia-Campus-Repository) (MIT License).
 
 ![banner](assets/banner.png)
 
 ## ```Description```
 
-Academia is a Django-based Campus Repository designed to streamline the file-sharing process between teachers and students. The platform offers distinct homepages for both teachers and students, each tailored to their specific needs. Teachers can efficiently manage files, set permissions, and maintain control over their uploads. On the other hand, students gain easy access to educational resources and a seamless file search experience.
+Plateforme Pédagogique est une application Django destinée à centraliser et faciliter le partage de ressources pédagogiques entre enseignants et étudiants. Elle propose des interfaces adaptées à chaque profil et des fonctionnalités avancées de recherche et de recommandation.
 
 ## ```Features```
 

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plateforme Pédagogique - Inscription</title>
+    {% load static %}
+    <link rel="icon" type="image/x-icon" href="{% static 'logo.png' %}">
+    <link rel="stylesheet" href="{% static 'index.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Poppins&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="outerBody">
+        <div id="innerRightLogin">
+            <h1 id="logorsign" style="padding-top: 50px;">S'inscrire</h1>
+
+            <form class="signup" action="{% url 'signup' %}" method="post">
+                {% csrf_token %}
+
+                <h3 id="labels">Nom complet</h3>
+                {{ user_form.first_name }}
+
+                <h3 id="labels">Email</h3>
+                {{ user_form.email }}
+
+                <h3 id="labels">Mot de passe</h3>
+                {{ user_form.password }}
+
+                <h3 id="labels">Vous êtes</h3>
+                {{ profile_form.user_type }}
+
+                <div id="rollNumberSection" style="display: none;">
+                    <h3 id="labels">Numéro d'étudiant (si applicable)</h3>
+                    {{ profile_form.roll_number }}
+                </div>
+
+                <input id="loginButton" type="submit" value="Créer le compte">
+
+                <h6 id="forgot-signup" style="text-decoration: none;">Déjà un compte ? <a href="{% url 'login' %}">Se connecter ici</a></h6>
+            </form>
+        </div>
+        <div id="innerLeftDetails">
+            {% load static %}
+            <img id="iconDetails" src="{% static 'loginBanner.png'%}" alt="Banner">
+        </div>
+    </div>
+
+    <script>
+        // Affiche ou cache le champ "Numéro d'étudiant" selon le rôle choisi
+        const userTypeRadios = document.querySelectorAll('input[name="user_type"]');
+        const rollNumberSection = document.getElementById('rollNumberSection');
+
+        function toggleRollNumber() {
+            if (document.querySelector('input[name="user_type"]:checked').value.toLowerCase() === 'student') {
+                rollNumberSection.style.display = 'block';
+            } else {
+                rollNumberSection.style.display = 'none';
+            }
+        }
+
+        userTypeRadios.forEach(radio => radio.addEventListener('change', toggleRollNumber));
+        
+        // Initial check in case of form reload with a value
+        if(document.querySelector('input[name="user_type"]:checked')) {
+            toggleRollNumber();
+        }
+    </script>
+</body>
+</html> 

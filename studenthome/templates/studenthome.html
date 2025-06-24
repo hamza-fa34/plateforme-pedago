@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE-edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Academia</title>
+    <title>Accueil - Plateforme Pédagogique</title>
     {% load static %}
     <link rel="icon" type="image/x-icon" href="{% static 'logo.png' %}">
     {% load static %}
@@ -103,27 +103,28 @@
         <div id="dummy">
             <h1 id="hello">
                 {% with profile.name as username %}
-                    Hi {% if request.user.is_authenticated %} {{ username }} {% else %} Not Found {% endif %} !
+                    Bonjour {% if request.user.is_authenticated %} {{ username }} {% else %} Inconnu {% endif %} !
                 {% endwith %}
                 {% if profile.roll_number %}
                     <h4 style="float: left;margin-top:55px;font-family: 'DM Serif Display', serif; color: #383737;">
-                        Roll Number: <h4 style="float: left;margin-top:55px;font-family: 'DM Serif Display', serif; color: #fffafa;padding-left:5px">{{ profile.roll_number }}</h4>
+                        Numéro étudiant : <h4 style="float: left;margin-top:55px;font-family: 'DM Serif Display', serif; color: #fffafa;padding-left:5px">{{ profile.roll_number }}</h4>
                     </h4>
                 {% endif %}
             </h1>  
             <form style="padding-top: 55px;padding-left:100px;float: left;" method="get" action="">
-                <label style="font-family: 'DM Serif Display', serif;" for="search">Search:</label>
+                <label style="font-family: 'DM Serif Display', serif;" for="search">Rechercher :</label>
                 <input type="text" style="font-family: 'DM Serif Display', serif; border-radius: 10px;" name="search">
-                <button style="font-family: 'DM Serif Display', serif; background-color: #c73a2b; color: #ffffff; border-radius: 10px; padding: 3px;" type="submit">Search</button>
+                <button style="font-family: 'DM Serif Display', serif; background-color: #c73a2b; color: #ffffff; border-radius: 10px; padding: 3px;" type="submit">Rechercher</button>
             </form>          
             {% load static %}
-            <img src="{% static 'textLogo.png' %}" alt="Text Logo" width="250px" style="float: right;padding-top: 9px;">
+            <!-- Remplacer le logo textuel par le nouveau logo si disponible -->
+            <!-- <img src="{% static 'nouveau_logo.png' %}" alt="Logo Plateforme" width="250px" style="float: right;padding-top: 9px;"> -->
         </div>
         <div class="table-container" id="innerBody">
             <table style="width: 100%; border-spacing: 10px;">
                 <thead style="background-color: #ff9c4f; color: #383737;">
                     <tr>
-                        <th style="padding: 10px;border-radius: 15px;font-size: large;">File Name</th>
+                        <th style="padding: 10px;border-radius: 15px;font-size: large;">Nom du fichier</th>
                         <th  style="padding: 10px;border-radius: 15px;font-size: large;">Action</th>
                     </tr>
                 </thead>
@@ -134,7 +135,7 @@
                             <td style="float: left;padding-left: 20px;">{{ file_data.file.name|get_file_name }}</td>
                             <td>
                                 <form action="{% url 'download_file' file_data.id %}" method="get">
-                                    <button type="submit" class="download-button" style="font-family: 'DM Serif Display', serif;background-color:#c73a2b;color:#ffffff;border-radius: 20px;font-weight: bold; padding: 3px 20px;">Download</button>
+                                    <button type="submit" class="download-button" style="font-family: 'DM Serif Display', serif;background-color:#c73a2b;color:#ffffff;border-radius: 20px;font-weight: bold; padding: 3px 20px;">Télécharger</button>
                                 </form>
                             </td>
                         </tr>
@@ -142,6 +143,25 @@
                 </tbody>
             </table>
         </div>
+    </div>
+
+    <!-- Section des recommandations "Trending" -->
+    <div id="trending-section" style="margin: 40px; padding: 25px; background-color: #ffeedb; border-radius: 20px;">
+        <h2 style="font-family: 'DM Serif Display', serif; color: #383737;">🔥 Les plus populaires cette semaine</h2>
+        {% if trending_resources %}
+            <ul style="list-style-type: none; padding: 0;">
+                {% for resource in trending_resources %}
+                    <li style="margin-bottom: 10px; font-family: 'Poppins', sans-serif;">
+                        <a href="{% url 'download_file' resource.id %}" style="text-decoration: none; color: #c73a2b; font-weight: bold;">
+                            {{ resource.file.name|get_file_name }}
+                        </a>
+                        <span style="color: #383737;"> ({{ resource.view_count }} vues)</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p style="font-family: 'Poppins', sans-serif; color: #383737;">Aucune ressource populaire pour le moment. Soyez le premier à en découvrir !</p>
+        {% endif %}
     </div>
 </body>
 </html>

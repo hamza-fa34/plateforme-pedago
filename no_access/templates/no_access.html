@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE-edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Academia - Campus Repository</title>
+    <title>Plateforme Pédagogique - Accès non autorisé</title>
     {% load static %}
     <link rel="icon" type="image/x-icon" href="{% static 'logo.png' %}">
     {% load static %}
@@ -19,8 +19,17 @@
     </style>
 </head>
 <body>
-    {% load static %}
-    <div id="outerBody" style="background-image: url('{% static 'notAllowedBanner.png'%}');">
+    <div id="container">
+        <h1>Accès non autorisé</h1>
+        <p>
+            Votre compte n'a pas le rôle requis pour accéder à cette page.
+            Le compte super-utilisateur est réservé à l'administration.
+        </p>
+        <div class="links">
+            <a href="{% url 'login' %}">Se connecter avec un autre compte</a>
+            <span>|</span>
+            <a href="/admin/">Accéder au panneau d'administration</a>
+        </div>
     </div>
 </body>
 </html>

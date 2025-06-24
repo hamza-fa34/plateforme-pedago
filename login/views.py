@@ -5,65 +5,70 @@ from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from .models import UserProfile
+from .forms import UserForm, UserProfileForm
 
 def login(request):
     template = loader.get_template('index.html')
     return HttpResponse(template.render())
 
-@csrf_exempt
-def signup_view(request):
+def signup(request):
     if request.method == 'POST':
-        name = request.POST.get('name')
-        user_type = request.POST.get('userType')
-        roll_number = request.POST.get('roll_number', '')
-        teacher_id = request.POST.get('teacher_id', '')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        forgot = request.POST.get('password')
+        user_form = UserForm(request.POST)
+        profile_form = UserProfileForm(request.POST)
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save(commit=False)
+            user.username = user_form.cleaned_data['email']
+            user.set_password(user_form.cleaned_data['password'])
+            user.save()
 
-        user = User.objects.create_user(username=email, email=email, password=password)
-        user.first_name = name
-        user.save()
+            profile = profile_form.save(commit=False)
+            profile.user = user
+            # Le nom est maintenant dans le User model (first_name)
+            profile.name = user_form.cleaned_data['first_name']
+            profile.save()
 
-        user_profile = UserProfile.objects.create(
-            name=name,
-            user_type=user_type,
-            roll_number=roll_number,
-            teacher_id=teacher_id,
-            email=email,
-            password=password,
-            forgot= forgot
-        )
+            return redirect('login')
+    else:
+        user_form = UserForm()
+        profile_form = UserProfileForm()
 
-        print(f"Email: {email}; Password: {password}; Name: {name}; Roll Number: {roll_number}; Teacher ID: {teacher_id}")
-        return redirect('login')
+    return render(request, 'signup.html', {
+        'user_form': user_form,
+        'profile_form': profile_form
+    })
 
-    return render(request, 'not_access.html')
-
-@csrf_exempt
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        try:
-            user_profile = UserProfile.objects.get(email=username)
-        except UserProfile.DoesNotExist:
-            user_profile = None
 
         user = authenticate(request, username=username, password=password)
 
-        if user_profile is not None and user is not None:
+        if user is not None:
             auth_login(request, user)
-            if user_profile.user_type == 'Student':
-                return redirect('studenthome')
-            elif user_profile.user_type == 'Teacher':
-                return redirect('teacherhome')
-            else:
-                return redirect('not_found')
+            try:
+                user_profile = user.userprofile
+                if user_profile.user_type == 'student':
+                    return redirect('studenthome')
+                elif user_profile.user_type == 'teacher':
+                    return redirect('teacherhome')
+                else:
+                    # Fallback au cas où le profil n'a pas de rôle valide
+                    return redirect('no_access')
+            except UserProfile.DoesNotExist:
+                # Gérer le cas où un User n'a pas de UserProfile (ex: superuser)
+                return redirect('no_access')
         else:
-            return redirect('no_access')
+            # L'authentification a échoué
+            return render(request, 'index.html', {'error_message': 'Identifiants invalides.'})
 
     return render(request, 'index.html')
+
+def forgot_password(request):
+    # Logique de réinitialisation de mot de passe à implémenter
+    # Pour l'instant, redirige simplement vers la page de connexion
+    # avec un message (qui peut être affiché dans le template)
+    return redirect('login') # Ajout d'un message serait une bonne amélioration
 
 import smtplib
 from email.mime.multipart import MIMEMultipart

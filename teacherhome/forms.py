@@ -1,8 +1,8 @@
 # forms.py
 from django import forms
-from .models import File
+from .models import Resource
 
 class FileModelForm(forms.ModelForm):
     class Meta:
-        model = File
-        fields = ['email', 'file', 'permission']
+        model = Resource
+        fields = ['file', 'permission']
