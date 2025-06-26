@@ -1,5 +1,5 @@
 # views.py
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from teacherhome.models import Resource, ResourceView
 from login.models import UserProfile
@@ -10,10 +10,11 @@ from datetime import timedelta
 @login_required
 def studentHome(request):
     try:
-        profile = UserProfile.objects.get(email=request.user.email)
+        profile = UserProfile.objects.get(user=request.user)
+        if not profile or profile.user_type != 'student':
+            return redirect('no_access')
     except UserProfile.DoesNotExist:
-        profile = None
-        print('UserProfile not found for user:', request.user.email)
+        return redirect('no_access')
 
     search_query = request.GET.get('search', '')
 

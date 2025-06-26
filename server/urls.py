@@ -15,22 +15,21 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path,include
+from django.urls import path, include
 from login import views as login_views
 from django.conf.urls import handler404
 from not_found.views import not_found_404
 
 handler404 = not_found_404
 
-
 urlpatterns = [
-    path('',login_views.login,name='login'),
+    path('', login_views.login, name='home'),  # Route racine vers la page de connexion
+    path('logout/', login_views.logout, name='logout'),  # Route logout globale
     path('admin/', admin.site.urls),
-    path('',include('login.urls')),
-    path('',include('no_access.urls')),
-    path('',include('not_found.urls')),
-    path('',include('studenthome.urls')),
-    path('',include('teacherhome.urls')),
-    path('login/',include('login.urls')),
+    path('', include('login.urls')),
+    path('', include('no_access.urls')),
+    path('', include('not_found.urls')),
+    path('', include('studenthome.urls')),
+    path('', include('teacherhome.urls')),
 ]
 

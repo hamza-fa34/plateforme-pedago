@@ -32,11 +32,6 @@
                 <h3 id="labels">Vous êtes</h3>
                 {{ profile_form.user_type }}
 
-                <div id="rollNumberSection" style="display: none;">
-                    <h3 id="labels">Numéro d'étudiant (si applicable)</h3>
-                    {{ profile_form.roll_number }}
-                </div>
-
                 <input id="loginButton" type="submit" value="Créer le compte">
 
                 <h6 id="forgot-signup" style="text-decoration: none;">Déjà un compte ? <a href="{% url 'login' %}">Se connecter ici</a></h6>

@@ -20,11 +20,6 @@
                 {% with profile.name as username %}
                     Bonjour {% if request.user.is_authenticated %} {{ username }} {% else %} Inconnu {% endif %} !
                 {% endwith %}
-                {% if profile.teacher_id %}
-                    <h4 style="float: left; margin-top: 55px; font-family: 'DM Serif Display', serif; color: #383737;">
-                        ID Enseignant : <h4 style="float: left; margin-top: 55px; font-family: 'DM Serif Display', serif; color: #fffafa; padding-left: 5px">{{ profile.teacher_id }}</h4>
-                    </h4>
-                {% endif %}
             </h1>
             {% load static %}
             <img src="{% static 'textLogo.png' %}" alt="Text Logo" width="250px" style="float: right;">
@@ -113,5 +108,6 @@
         </div>
 
     </div>
+    <a href="{% url 'logout' %}" style="float:right; margin: 10px; color: #c73a2b; font-weight: bold;">Déconnexion</a>
 </body>
 </html>

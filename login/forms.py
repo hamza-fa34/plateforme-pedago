@@ -16,8 +16,7 @@ class UserProfileForm(forms.ModelForm):
         widget=forms.RadioSelect,
         label="Vous êtes"
     )
-    roll_number = forms.CharField(label="Numéro d'étudiant", required=False)
 
     class Meta:
         model = UserProfile
-        fields = ['user_type', 'roll_number']
+        fields = ['user_type']

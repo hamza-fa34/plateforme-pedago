@@ -1,15 +1,16 @@
 from django.http import HttpResponse
 from django.template import loader
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from .models import UserProfile
 from .forms import UserForm, UserProfileForm
-
-def login(request):
-    template = loader.get_template('index.html')
-    return HttpResponse(template.render())
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
+from urllib.parse import unquote
 
 def signup(request):
     if request.method == 'POST':
@@ -37,7 +38,7 @@ def signup(request):
         'profile_form': profile_form
     })
 
-def login_view(request):
+def login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -51,13 +52,13 @@ def login_view(request):
                 if user_profile.user_type == 'student':
                     return redirect('studenthome')
                 elif user_profile.user_type == 'teacher':
-                    return redirect('teacherhome')
+                    return redirect('teacher_home')
                 else:
                     # Fallback au cas où le profil n'a pas de rôle valide
                     return redirect('no_access')
             except UserProfile.DoesNotExist:
                 # Gérer le cas où un User n'a pas de UserProfile (ex: superuser)
-                return redirect('no_access')
+                return render(request, 'index.html', {'error_message': "Aucun profil utilisateur associé à ce compte. Contactez l'administrateur."})
         else:
             # L'authentification a échoué
             return render(request, 'index.html', {'error_message': 'Identifiants invalides.'})
@@ -69,31 +70,6 @@ def forgot_password(request):
     # Pour l'instant, redirige simplement vers la page de connexion
     # avec un message (qui peut être affiché dans le template)
     return redirect('login') # Ajout d'un message serait une bonne amélioration
-
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
-
-from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
-from .models import UserProfile
-from urllib.parse import unquote
-def forgot_password(request):
-    login_email = request.GET.get('email')
-    print("Login Email:", login_email)
-    email = login_email
-    try:
-        user_profile = UserProfile.objects.get(email=email)
-    except UserProfile.DoesNotExist:
-        print("No User")
-        return render(request, 'index.html', {'error_message': 'No account found with this email address'})
-    forgot_value = user_profile.forgot
-    name = user_profile.name
-    
-    forgotPasswordMail(email, forgot_value,name)
-    print("Mail Sent")
-    return render(request, 'index.html')
 
 def forgotPasswordMail(to_email,password,name = "User"):
     MAIL_ID = "ENTER_YOUR_GMAIL"
@@ -126,3 +102,7 @@ def forgotPasswordMail(to_email,password,name = "User"):
         server.starttls()
         server.login(MAIL_ID, PASSWORD)
         server.sendmail(MAIL_ID, to_email, msg.as_string())
+
+def logout(request):
+    auth_logout(request)
+    return redirect('login')

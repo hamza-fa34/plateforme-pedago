@@ -22,9 +22,11 @@ from urllib.parse import unquote
 @login_required
 def teacher_home(request):
     try:
-        profile = UserProfile.objects.get(email=request.user.email)
+        profile = UserProfile.objects.get(user=request.user)
+        if not profile or profile.user_type != 'teacher':
+            return redirect('no_access')
     except UserProfile.DoesNotExist:
-        profile = None
+        return redirect('no_access')
 
     search_query = request.GET.get('search', '')
     
@@ -83,14 +85,14 @@ def delete_file(request, file_id):
 def get_teacher_name_and_id(uploaded_by):
     try:
         teacher_profile = UserProfile.objects.get(user__username=uploaded_by)
-        return teacher_profile.name, teacher_profile.teacher_id
+        return teacher_profile.name, None  # teacher_id n'existe pas dans UserProfile
     except UserProfile.DoesNotExist:
         return None, None
 
-def notification(file_name, name, email):
-    # DÉPRÉCIÉ : Ne pas utiliser en l'état.
-    pass
+# def notification(file_name, name, email):
+#     # DÉPRÉCIÉ : Ne pas utiliser en l'état.
+#     pass
 
 def getStudents():
-    students_emails = UserProfile.objects.filter(user_type='Student').values_list('email', flat=True)
+    students_emails = UserProfile.objects.filter(user_type='student').values_list('user__email', flat=True)
     return students_emails
