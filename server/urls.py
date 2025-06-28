@@ -19,6 +19,8 @@ from django.urls import path, include
 from login import views as login_views
 from django.conf.urls import handler404
 from not_found.views import not_found_404
+from django.conf import settings
+from django.conf.urls.static import static
 
 handler404 = not_found_404
 
@@ -32,4 +34,8 @@ urlpatterns = [
     path('', include('studenthome.urls')),
     path('', include('teacherhome.urls')),
 ]
+
+# Configuration pour servir les fichiers statiques en mode DEBUG
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

@@ -3,21 +3,9 @@ from django.contrib.auth.decorators import login_required
 from .forms import FileModelForm
 from .models import Resource
 from login.models import UserProfile
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
-from django.conf import settings
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
-from django.core.files import File as DjangoFile
 from wsgiref.util import FileWrapper
 from mimetypes import guess_type
-from django.contrib.auth.models import User
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
-from urllib.parse import unquote
 
 @login_required
 def teacher_home(request):
@@ -41,7 +29,7 @@ def teacher_home(request):
     context = {
         'profile': profile,
         'form': form,
-        'filtered_files': user_resources,
+        'files_data': user_resources,
         'search_query': search_query,
     }
     return render(request, 'teacherhome.html', context)
@@ -88,10 +76,6 @@ def get_teacher_name_and_id(uploaded_by):
         return teacher_profile.name, None  # teacher_id n'existe pas dans UserProfile
     except UserProfile.DoesNotExist:
         return None, None
-
-# def notification(file_name, name, email):
-#     # DÉPRÉCIÉ : Ne pas utiliser en l'état.
-#     pass
 
 def getStudents():
     students_emails = UserProfile.objects.filter(user_type='student').values_list('user__email', flat=True)
