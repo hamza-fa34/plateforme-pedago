@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Erreur de sécurité{% endblock %}
+{% block content %}
+<main class="main-content text-center">
+  <h1>Erreur de sécurité</h1>
+  <div class="alert alert-error">
+    Une erreur CSRF est survenue. Veuillez réessayer ou contacter le support.<br>
+    <small>{{ reason }}</small>
+  </div>
+  <a href="/" class="btn btn-primary">Retour à l'accueil</a>
+</main>
+{% endblock %} 

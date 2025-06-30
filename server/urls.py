@@ -17,12 +17,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from login import views as login_views
-from django.conf.urls import handler404
+from django.conf.urls import handler404, handler403
 from not_found.views import not_found_404
+from server.views import csrf_failure
 from django.conf import settings
 from django.conf.urls.static import static
 
 handler404 = not_found_404
+handler403 = csrf_failure
 
 urlpatterns = [
     path('', login_views.login, name='home'),  # Route racine vers la page de connexion

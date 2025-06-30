@@ -37,9 +37,7 @@ def login(request):
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
-
             user = authenticate(request, username=username, password=password)
-
             if user is not None:
                 auth_login(request, user)
                 try:
@@ -66,7 +64,21 @@ def login(request):
     return render(request, 'index.html', {'form': form})
 
 def forgot_password(request):
-    return redirect('login')
+    info_message = None
+    error_message = None
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        if not email:
+            error_message = "Veuillez entrer votre adresse email."
+        elif not User.objects.filter(email=email).exists():
+            error_message = "Aucun compte n'est associé à cette adresse email."
+        else:
+            # Ici, tu pourrais envoyer un email réel de réinitialisation
+            info_message = "Si un compte existe pour cette adresse, un lien de réinitialisation a été envoyé."
+    return render(request, 'forgot_password.html', {
+        'error_message': error_message,
+        'info_message': info_message
+    })
 
 def logout(request):
     auth_logout(request)

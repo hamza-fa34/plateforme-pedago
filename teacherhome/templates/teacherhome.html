@@ -1,54 +1,92 @@
 {% extends 'base.html' %}
 {% load custom_filters %}
-{% block title %}Accueil Enseignant - Plateforme Pédagogique{% endblock %}
+{% load static %}
+{% block title %}Espace Enseignant - Plateforme Pédagogique{% endblock %}
 {% block content %}
-    <div class="container">
-        <main class="main-content">
-            <h1>Accueil enseignant</h1>
-            <form class="form search-form" method="get" action="">
-                <input type="text" name="search" placeholder="Rechercher une ressource...">
-                <button type="submit" class="btn btn-primary">Rechercher</button>
-            </form>
-            <table class="table-fullwidth">
-                <thead>
-                    <tr>
-                        <th>Nom du fichier</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for file_data in files_data %}
-                        <tr>
-                            <td>{{ file_data.file.name|get_file_name }}</td>
-                            <td>
-                                <form action="{% url 'download_file' file_data.id %}" method="get">
-                                    <button type="submit" class="btn btn-primary">Télécharger</button>
-                                </form>
-                            </td>
-                        </tr>
-                    {% empty %}
-                        <tr><td colspan="2" class="text-center text-muted">Aucune ressource disponible.</td></tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <section class="section-populaires">
-                <div class="divider"></div>
-                <h2>Les plus populaires cette semaine</h2>
-                {% if trending_resources %}
-                    <ul class="list-unstyled">
-                        {% for resource in trending_resources %}
-                            <li>
-                                <a href="{% url 'download_file' resource.id %}" class="text-decoration-none text-secondary font-weight-bold">
-                                    {{ resource.file.name|get_file_name }}
-                                </a>
-                                <span class="text-muted"> ({{ resource.view_count }} vues)</span>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p class="text-muted">Aucune ressource populaire pour le moment. Soyez le premier à en découvrir !</p>
-                {% endif %}
-            </section>
-        </main>
+<div class="centered-container">
+  <div class="teacher-card twocol">
+    <div class="teacher-main-col">
+      <div class="teacher-header">
+        <div class="header-left">
+          <img src="{% static 'logo.png' %}" alt="Logo" class="header-logo">
+          <div class="header-user">
+            <span class="user-name">{{ profile.name }}</span>
+            <span class="user-role">Enseignant</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <a href="{% url 'logout' %}" class="btn btn-logout" title="Déconnexion"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+        </div>
+      </div>
+      <div class="resources-table-section">
+        <table class="table-modern">
+          <thead>
+            <tr>
+              <th>Nom du fichier</th>
+              <th>Type</th>
+              <th>Permission</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for file_data in files_data %}
+              <tr>
+                <td><i class="fas fa-file-alt"></i> {{ file_data.file.name|get_file_name }}</td>
+                <td>
+                  {% if file_data.file.name|lower|slice:"-4:" == '.pdf' %}
+                    <span class="badge badge-pdf">PDF</span>
+                  {% elif file_data.file.name|lower|slice:"-4:" == '.doc' or file_data.file.name|lower|slice:"-5:" == '.docx' %}
+                    <span class="badge badge-doc">DOC</span>
+                  {% elif file_data.file.name|lower|slice:"-4:" == '.ppt' or file_data.file.name|lower|slice:"-5:" == '.pptx' %}
+                    <span class="badge badge-ppt">PPT</span>
+                  {% else %}
+                    <span class="badge badge-other">AUTRE</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if file_data.permission == 1 %}
+                    <span class="badge badge-public">Public</span>
+                  {% else %}
+                    <span class="badge badge-private">Privé</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <div class="action-buttons">
+                    <a href="{% url 'download_file' file_data.id %}" class="btn btn-sm btn-primary" title="Télécharger"><i class="fas fa-download"></i></a>
+                    <form action="{% url 'delete_file' file_data.id %}" method="post" class="delete-form" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette ressource ?')">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-sm btn-danger" title="Supprimer"><i class="fas fa-trash"></i></button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="4" class="text-center text-muted">Aucune ressource disponible.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
+    <div class="teacher-side-col">
+      <div class="upload-box">
+        <h3 class="upload-title"><i class="fas fa-upload"></i> Ajouter une ressource</h3>
+        <form class="form upload-form" method="post" action="{% url 'upload_form' %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="{{ form.file.id_for_label }}" class="form-label">Fichier</label>
+            <input type="file" name="{{ form.file.name }}" id="{{ form.file.id_for_label }}" class="form-control" required accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.zip,.rar">
+          </div>
+          <div class="form-group">
+            <label for="{{ form.permission.id_for_label }}" class="form-label">Permission</label>
+            <select name="{{ form.permission.name }}" id="{{ form.permission.id_for_label }}" class="form-control">
+              <option value="1">Public</option>
+              <option value="0">Privé</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary btn-upload"><i class="fas fa-upload"></i> Upload</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

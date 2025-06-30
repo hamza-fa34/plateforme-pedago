@@ -2,145 +2,66 @@
 
 > Ce projet est un fork et une adaptation de [Academia Campus Repository](https://github.com/VishalTheHuman/Academia-Campus-Repository) (MIT License).
 
-![banner](assets/banner.png)
+## 🎯 Périmètre MVP (Minimum Viable Product)
 
-## ```Description```
+La plateforme, dans sa version MVP, propose uniquement les fonctionnalités suivantes :
 
-Plateforme Pédagogique est une application Django destinée à centraliser et faciliter le partage de ressources pédagogiques entre enseignants et étudiants. Elle propose des interfaces adaptées à chaque profil et des fonctionnalités avancées de recherche et de recommandation.
+- **Comptes et rôles** :
+  - Inscription, connexion, déconnexion
+  - Gestion des rôles (étudiant, enseignant, admin)
+  - Redirections et accès selon le rôle
+- **Dépôt de ressources** :
+  - Dépôt de fichiers (PDF, vidéo, URL)
+  - Extraction automatique de mots-clés
+- **Recherche** :
+  - Recherche plein-texte sur les ressources
+  - Filtres et suggestions (« Trending », « Similaires »)
+- **Favoris** :
+  - Ajout/suppression de ressources en favoris (⭐)
+  - Liste personnelle de favoris
+- **Dashboard admin basique** :
+  - Statistiques de dépôts, vues, utilisateurs
 
-## ```Features```
+---
 
-### Teacher Homepage
+## 🚧 Backlog futur (hors périmètre MVP)
 
-- **Upload Files:**
-  Teachers can upload files directly to the repository, making educational materials easily accessible to students. 📤
+Les fonctionnalités suivantes sont reportées à une phase ultérieure :
 
-- **Delete Files:**
-  Teachers have the capability to remove files, ensuring content relevance and organization within the repository. 🗑️
+- Modules « Cours », « Devoirs », « Notifications » temps réel
+- Gestion avancée des étudiants, évaluations, progression
+- API REST, PWA, mode sombre, marketplace, analytics avancés, IA, etc.
+- Paramètres utilisateur avancés
+- Toute autre fonctionnalité non listée dans le MVP
 
-- **Set Permission Access:**
-  Control file access by setting permission levels. Teachers can manage who can view and download their uploaded files. 🔒
+---
 
-- **File Filtering:**
-  Teachers can view only the files they have uploaded, creating a personalized and organized experience. 📂
+## 🗺️ Roadmap (prévisionnelle)
 
-### Student Homepage
+### **Sprint 1 : Stabilisation & Tests du MVP**
+- Correction de bugs, stabilisation du code
+- Sécurisation des accès et des données
+- Tests manuels et automatisés des parcours MVP
 
-- **View All Files:**
-  Students have access to a comprehensive list of all files uploaded by teachers, facilitating easy discovery of educational resources. 👀
+### **Sprint 2 : Améliorations UX/UI**
+- Accessibilité (a11y)
+- Responsive design (mobile/tablette)
+- Uniformisation des styles et composants
+- Petites améliorations ergonomiques
 
-- **Download Files:**
-  Students can download files uploaded by teachers, enabling offline access to course materials. 📥
+### **Sprint 3 : Fonctionnalités hors périmètre**
+- Réintégration progressive des modules avancés (cours, devoirs, notifications, etc.)
+- Déploiement d'API, PWA, analytics, IA, etc.
+- Améliorations majeures selon retours utilisateurs
 
-- **Search Functionality:**
-  An efficient search feature allows students to find files by their names, making it simple to locate specific educational resources. 🔍
+---
 
-## ```Tech Stack```
+## 📦 Installation & Lancement
 
-- **Django:**
-  The web application is built using the Django framework, providing a robust and scalable foundation for campus repository management. 🐍
+(Instructions d'installation et de lancement à compléter selon le projet)
 
-- **Python:**
-  The backend logic and functionality are implemented using Python, ensuring a clean and efficient codebase. 🐍
+---
 
-- **SQLite Database:**
-  The project utilizes SQLite for database management, offering a lightweight and easily deployable solution. 🗃️
+## 📄 Licence
 
-- **HTML/CSS/JavaScript:**
-  The frontend is designed using a combination of HTML, CSS, and JavaScript to create a user-friendly and responsive interface. 🌐
-
-## ```Setup```
-
-Step-by-step instructions to set up and run the project.
-
-### Prerequisites
-
-1. **Download Python:**
-   - Visit the [Python Download Page](https://www.python.org/downloads/) to download the latest version of Python.
-   - Follow the installation instructions for your operating system.
-
-2. **Get Pip:**
-   - Pip usually comes bundled with Python installations after version 3.4. If you need to install or upgrade it, follow the instructions on the [Pip Installation Guide](https://pip.pypa.io/en/stable/installation/).
-
-### Project Setup
-
-3. **Install Django:**
-   - Open a terminal or command prompt.
-   - Run the following command to install Django:
-
-     ```bash
-     pip install django
-     ```
-
-4. **Install SMTPMail and MIME:**
-   - Run the following commands to install the required packages:
-
-     ```bash
-     pip install smtpmail
-     pip install mime
-     ```
-
-5. **Set Absolute URLs for Images:**
-   - Open `login/views.py` and `teacherhome/views.py`.
-   - Locate the URL for `textLogo.png` in both files.
-   - Replace the relative URL with an absolute URL. Example:
-
-     ```python
-     # Before
-     img_url = 'textLogo.png'
-
-     # After
-     img_url = 'D:/path/to/the/image'
-     ```
-
-6. **Change Gmail and Password**
-   - Open `login/views.py` and `teacherhome/views.py`.
-   - Locate the URL for `MAIL_ID` and `PASSWORD` in both files.
-   - Change the password and email to your desired one. Refer here : [Steps to Create App Password : Google](https://support.google.com/accounts/answer/185833?hl=en) 
-
-
-     ```python
-     MAIL_ID = "ENTER_YOUR_GMAIL"
-     PASSWORD = "xxxx xxxx xxxx xxxx"
-     ```
-### Database Setup
-
-7. **Run Migrations:**
-   - In the root directory of your project, run the following commands to set up the database:
-
-     ```bash
-     python manage.py makemigrations
-     python manage.py migrate
-     ```
-
-### Run the Project
-
-8. **Start the Development Server:**
-   - Run the following command to start the development server:
-
-     ```bash
-     python manage.py runserver
-     ```
-   - Visit `http://localhost:8000/` in your web browser to view the project.
-
-## ```User Interface (UI) and Email Client```
-
-![login](assets/login.png)
-![signup](assets/signup.png)
-![no access](assets/no%20access.png)
-![404](assets/404.png)
-![student home](assets/student%20home.png)
-![teacher home](assets/teacher%20home.png)
-![file notification](assets/file%20notification.png)
-
-## ```Getting Started```
-
-To set up and run Academia locally, follow the instructions in the [Project Setup Guide](#) provided in the repository.
-
-## ```Contributing```
-
-Contributions are welcome! 🤝
-
-## ```License```
-
-This project is licensed under the [MIT License](LICENSE). Feel free to use, modify, and distribute the code as per the terms of the license. 📄
+MIT. Voir [LICENSE](LICENSE).

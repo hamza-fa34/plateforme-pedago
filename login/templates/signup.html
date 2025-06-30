@@ -1,78 +1,89 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Inscription - Plateforme Pédagogique{% endblock %}
 {% block content %}
-    <div class="container">
-        <main class="main-content">
-            <h1>Inscription</h1>
-            {% if error_message %}
-                <div class="alert alert-error">{{ error_message }}</div>
-            {% endif %}
-            <form class="form" action="{% url 'signup' %}" method="post">
-                {% csrf_token %}
-                {{ user_form.as_p }}
-                {{ profile_form.user_type.label_tag }}
-                {{ profile_form.user_type }}
-                <div id="rollNumberSection" style="display: none;">
-                    {{ profile_form.roll_number.label_tag }}
-                    {{ profile_form.roll_number }}
-                </div>
-                <button type="submit" class="btn btn-primary">Créer le compte</button>
-            </form>
-            <div class="text-center">
-                <a href="{% url 'login' %}" class="btn btn-secondary">Déjà un compte ? Se connecter ici</a>
-            </div>
-        </main>
+<div class="split-container">
+  <div class="split-left">
+    <img src="{% static 'login/signup.png' %}" alt="Illustration inscription" class="split-illustration">
+    <h1 class="split-title">Plateforme Pédagogique</h1>
+    <p class="split-subtitle">Créez votre compte pour accéder à toutes les ressources pédagogiques de la plateforme.</p>
+  </div>
+  <div class="split-right">
+    <div class="form-card">
+      <h2>Inscription</h2>
+      <form class="form" action="" method="post" novalidate>
+        {% csrf_token %}
+        <!-- Nom complet -->
+        <div class="form-group">
+          <label for="id_first_name">Nom complet</label>
+          <input type="text" name="first_name" id="id_first_name" class="form-control" placeholder="Votre nom complet" aria-label="Nom complet" value="{{ user_form.first_name.value|default:'' }}" required>
+          {% if user_form.first_name.errors %}
+            <div class="alert alert-error">{{ user_form.first_name.errors.0 }}</div>
+          {% endif %}
+        </div>
+        <!-- Email -->
+        <div class="form-group">
+          <label for="id_email">Adresse email</label>
+          <input type="email" name="email" id="id_email" class="form-control" placeholder="Votre adresse email" aria-label="Adresse email" value="{{ user_form.email.value|default:'' }}" required>
+          {% if user_form.email.errors %}
+            <div class="alert alert-error">{{ user_form.email.errors.0 }}</div>
+          {% endif %}
+        </div>
+        <!-- Mot de passe -->
+        <div class="form-group">
+          <label for="id_password">Mot de passe</label>
+          <input type="password" name="password" id="id_password" class="form-control" placeholder="Créez un mot de passe" aria-label="Mot de passe" required>
+          {% if user_form.password.errors %}
+            <div class="alert alert-error">{{ user_form.password.errors.0 }}</div>
+          {% endif %}
+        </div>
+        <!-- Type d'utilisateur -->
+        <div class="form-group">
+          <label>Vous êtes</label>
+          {% for radio in profile_form.user_type %}
+            <label class="radio-inline">
+              {{ radio.tag }} {{ radio.choice_label }}
+            </label>
+          {% endfor %}
+          {% if profile_form.user_type.errors %}
+            <div class="alert alert-error">{{ profile_form.user_type.errors.0 }}</div>
+          {% endif %}
+        </div>
+        <!-- Numéro d'étudiant (affiché si étudiant) -->
+        <div class="form-group" id="rollNumberSection" style="display: none;">
+          <label for="id_roll_number">Numéro d'étudiant</label>
+          <input type="text" name="roll_number" id="id_roll_number" class="form-control" placeholder="Numéro d'étudiant (si étudiant)" aria-label="Numéro d'étudiant" value="{{ profile_form.roll_number.value|default:'' }}">
+          {% if profile_form.roll_number.errors %}
+            <div class="alert alert-error">{{ profile_form.roll_number.errors.0 }}</div>
+          {% endif %}
+        </div>
+        {% if error_message %}
+          <div class="alert alert-error">{{ error_message }}</div>
+        {% endif %}
+        <button type="submit" class="btn btn-primary">S'inscrire</button>
+        <div class="text-center" style="margin-top:1rem;">
+          <a href="{% url 'login' %}" class="btn btn-secondary">Déjà un compte ? Se connecter ici</a>
+        </div>
+      </form>
     </div>
-{% endblock %}
-
+  </div>
+</div>
 <script>
-    // Affiche ou cache le champ "Numéro d'étudiant" selon le rôle choisi
-    const userTypeRadios = document.querySelectorAll('input[name="user_type"]');
-    const rollNumberSection = document.getElementById('rollNumberSection');
-
-    function toggleRollNumber() {
-        if (document.querySelector('input[name="user_type"]:checked').value.toLowerCase() === 'student') {
-            rollNumberSection.style.display = 'block';
-        } else {
-            rollNumberSection.style.display = 'none';
-        }
+function toggleRollNumber() {
+  const radios = document.querySelectorAll('input[name="user_type"]');
+  const rollSection = document.getElementById('rollNumberSection');
+  let isStudent = false;
+  radios.forEach(radio => {
+    if (radio.checked && radio.value === 'student') {
+      isStudent = true;
     }
-
-    userTypeRadios.forEach(radio => radio.addEventListener('change', toggleRollNumber));
-    
-    // Initial check in case of form reload with a value
-    if(document.querySelector('input[name="user_type"]:checked')) {
-        toggleRollNumber();
-    }
-</script> 
-
-<style>
-    /* Tableaux modernes avec hover et alternance */
-    .table-modern {
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    .table-modern th {
-        background: var(--color-primary);
-        color: white;
-        padding: 1rem;
-        font-weight: 600;
-    }
-
-    .table-modern td {
-        padding: 1rem;
-        border-bottom: 1px solid var(--color-border);
-        transition: background 0.2s;
-    }
-
-    .table-modern tr:nth-child(even) {
-        background: #f8f9fa;
-    }
-
-    .table-modern tr:hover {
-        background: var(--color-accent);
-        color: white;
-    }
-</style> 
+  });
+  rollSection.style.display = isStudent ? 'block' : 'none';
+}
+document.addEventListener('DOMContentLoaded', function() {
+  const radios = document.querySelectorAll('input[name="user_type"]');
+  radios.forEach(radio => radio.addEventListener('change', toggleRollNumber));
+  toggleRollNumber();
+});
+</script>
+{% endblock %} 
