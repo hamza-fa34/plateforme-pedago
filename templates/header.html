@@ -1,63 +1,50 @@
 {% load static %}
 {% load user_tags %}
--<header class="main-header">
-+<header class="main-header" role="banner">
+
+<header class="main-header" role="banner" style="background: var(--color-primary, #1a237e); color: #fff;">
   <div class="container header-flex">
-    <a href="/" class="header-brand">
+    <a href="{% if user.is_authenticated %}{% if user|is_student %}{% url 'studenthome' %}{% else %}{% url 'teacher_home' %}{% endif %}{% else %}/{% endif %}" class="header-brand" style="color: #fff;">
       <img src="{% static 'logo.png' %}" alt="Logo" class="logo-img">
       <span class="logo-text">Plateforme Pédagogique</span>
     </a>
+
     {% if user.is_authenticated %}
--      <nav class="nav desktop-nav" aria-label="Navigation principale">
--        <a href="{% if user|is_student %}{% url 'studenthome' %}{% else %}{% url 'teacher_home' %}{% endif %}" class="nav-link btn btn-primary">Mon Espace</a>
--        <span class="user-name">{{ user.first_name|default:user.username }}</span>
--        <a href="{% url 'logout' %}" class="nav-link logout-link">Déconnexion</a>
--      </nav>
-+      <nav class="nav desktop-nav" role="navigation" aria-label="Navigation principale">
-+        <ul class="nav-list">
-+          <li><a href="{% if user|is_student %}{% url 'studenthome' %}{% else %}{% url 'teacher_home' %}{% endif %}"
-+                 class="nav-link btn btn-primary">Mon Espace</a></li>
-+          <li><span class="user-name">{{ user.first_name|default:user.username }}</span></li>
-+          <li><a href="{% url 'logout' %}" class="nav-link logout-link">Déconnexion</a></li>
-+        </ul>
-+      </nav>
+      <!-- Desktop Navigation -->
+      <nav class="nav desktop-nav" role="navigation" aria-label="Navigation principale">
+        <ul class="nav-list">
+          <li><a href="{% if user|is_student %}{% url 'studenthome' %}{% else %}{% url 'teacher_home' %}{% endif %}"
+                 class="nav-link btn btn-primary" style="background: #fff; color: var(--color-primary, #1a237e);">Mon Espace</a></li>
+          <li><a href="{% url 'logout' %}" class="nav-link btn btn-logout" style="color: #fff;">Déconnexion</a></li>
+        </ul>
+      </nav>
+
+      <!-- Mobile Navigation Toggle -->
+      <button class="burger-menu" aria-label="Ouvrir le menu" aria-controls="mobileMenu" aria-expanded="false" type="button" style="color: #fff;">
+        <span class="burger-bar"></span>
+        <span class="burger-bar"></span>
+        <span class="burger-bar"></span>
+      </button>
+
+      <!-- Mobile Menu -->
+      <aside id="mobileMenu" class="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu mobile" style="background: var(--color-primary, #1a237e); color: #fff;">
+        <button class="close-menu" aria-label="Fermer le menu" type="button" style="color: #fff;">&times;</button>
+        <nav class="nav mobile-nav" role="navigation" aria-label="Navigation mobile">
+          <ul class="nav-list">
+            <li><a href="{% if user|is_student %}{% url 'studenthome' %}{% else %}{% url 'teacher_home' %}{% endif %}" class="nav-link btn btn-primary" style="background: #fff; color: var(--color-primary, #1a237e);">Mon Espace</a></li>
+            <li><a href="{% url 'logout' %}" class="nav-link btn btn-logout" style="color: #fff;">Déconnexion</a></li>
+          </ul>
+        </nav>
+      </aside>
+      <div class="mobile-menu-overlay" aria-hidden="true"></div>
+
     {% else %}
--      <!-- rien affiché pour les invités -->
-+      <nav class="nav guest-menu" role="navigation" aria-label="Menu visiteur">
-+        <a href="{% url 'login' %}"  class="btn btn-primary">Connexion</a>
-+        <a href="{% url 'signup' %}" class="btn btn-secondary">Inscription</a>
-+      </nav>
+      <nav class="nav desktop-nav" role="navigation" aria-label="Navigation principale">
+        <ul class="nav-list">
+          <li><a href="{% url 'login' %}" class="nav-link btn btn-primary" style="background: #fff; color: var(--color-primary, #1a237e);">Connexion</a></li>
+          <li><a href="{% url 'signup' %}" class="nav-link btn btn-secondary" style="color: #fff;">Inscription</a></li>
+        </ul>
+      </nav>
     {% endif %}
 
--    <button class="burger-menu" aria-label="Ouvrir le menu" aria-controls="mobileMenu" aria-expanded="false" tabindex="0">
-+    <button class="burger-menu" aria-label="Ouvrir le menu" aria-controls="mobileMenu" aria-expanded="false">
-      <span class="burger-bar"></span>
-      <span class="burger-bar"></span>
-      <span class="burger-bar"></span>
-    </button>
-@@
--    <aside id="mobileMenu" class="mobile-menu" aria-label="Menu mobile" tabindex="-1">
--      <button class="close-menu" aria-label="Fermer le menu" tabindex="0">&times;</button>
--      <a href="{% if user|is_student %}{% url 'studenthome' %}{% else %}{% url 'teacher_home' %}{% endif %}" class="nav-link btn btn-primary">Mon Espace</a>
--      <span class="user-name">{{ user.first_name|default:user.username }}</span>
--      <a href="{% url 'logout' %}" class="nav-link logout-link">Déconnexion</a>
--    </aside>
-+    <aside id="mobileMenu" class="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu mobile">
-+      <button class="close-menu" aria-label="Fermer le menu">&times;</button>
-+      <nav class="nav mobile-nav" role="navigation" aria-label="Navigation mobile">
-+        <ul class="nav-list">
-+        {% if user.is_authenticated %}
-+          <li><a href="{% if user|is_student %}{% url 'studenthome' %}{% else %}{% url 'teacher_home' %}{% endif %}"
-+                 class="btn btn-primary">Mon Espace</a></li>
-+          <li><span class="user-name">{{ user.first_name|default:user.username }}</span></li>
-+          <li><a href="{% url 'logout' %}" class="logout-link">Déconnexion</a></li>
-+        {% else %}
-+          <li><a href="{% url 'login' %}"  class="btn btn-primary">Connexion</a></li>
-+          <li><a href="{% url 'signup' %}" class="btn btn-secondary">Inscription</a></li>
-+        {% endif %}
-+        </ul>
-+      </nav>
-+    </aside>
-    <div class="mobile-menu-overlay"></div>
   </div>
 </header>

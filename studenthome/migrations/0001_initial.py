@@ -1,0 +1,1 @@
+# Ajout du modèle Favorite dans la migration initiale si besoin 

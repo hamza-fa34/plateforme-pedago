@@ -9,7 +9,6 @@
       <div class="header-left">
         <img src="{% static 'logo.png' %}" alt="Logo" class="header-logo">
         <div class="header-user">
-          <span class="user-name">{{ profile.name }}</span>
           <span class="user-role">Étudiant</span>
         </div>
       </div>
@@ -25,12 +24,13 @@
         </div>
       </form>
       <table class="table-modern">
+        <caption class="visually-hidden">Liste des ressources pédagogiques de l'étudiant</caption>
         <thead>
           <tr>
-            <th>Nom du fichier</th>
-            <th>Type</th>
-            <th>Enseignant</th>
-            <th>Actions</th>
+            <th scope="col">Nom du fichier</th>
+            <th scope="col">Type</th>
+            <th scope="col">Enseignant</th>
+            <th scope="col">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -52,7 +52,9 @@
               <td>
                 <div class="action-buttons">
                   <a href="{% url 'download_file' file_data.id %}" class="btn btn-sm btn-primary" title="Télécharger"><i class="fas fa-download"></i></a>
-                  <button class="btn btn-sm btn-outline" title="Ajouter aux favoris" onclick="addToFavorites({{ file_data.id }})"><i class="fas fa-heart"></i></button>
+                  <button class="btn btn-sm btn-outline favorite-btn" title="Ajouter aux favoris" aria-label="Ajouter la ressource {{ file_data.file.name|get_file_name }} aux favoris" data-resource-id="{{ file_data.id }}" type="button">
+                    <i class="fas fa-heart{% if file_data.id in favorite_ids %} favorite{% endif %}"></i>
+                  </button>
                 </div>
               </td>
             </tr>
@@ -65,9 +67,34 @@
   </div>
 </div>
 <script>
-function addToFavorites(resourceId) {
-  // TODO: Implémenter la fonctionnalité des favoris
-  alert('Fonctionnalité des favoris à venir !');
-}
+document.querySelectorAll('.favorite-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    const resourceId = this.getAttribute('data-resource-id');
+    fetch('{% url "toggle_favorite" %}', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': '{{ csrf_token }}',
+      },
+      body: 'resource_id=' + resourceId
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        const icon = this.querySelector('i');
+        if (data.favorited) {
+          icon.classList.add('favorite');
+        } else {
+          icon.classList.remove('favorite');
+        }
+      }
+    });
+  });
+});
 </script>
+<style>
+.fa-heart.favorite {
+  color: #e53935;
+}
+</style>
 {% endblock %}

@@ -10,7 +10,6 @@
         <div class="header-left">
           <img src="{% static 'logo.png' %}" alt="Logo" class="header-logo">
           <div class="header-user">
-            <span class="user-name">{{ profile.name }}</span>
             <span class="user-role">Enseignant</span>
           </div>
         </div>
@@ -20,12 +19,13 @@
       </div>
       <div class="resources-table-section">
         <table class="table-modern">
+          <caption class="visually-hidden">Liste des ressources pédagogiques de l'enseignant</caption>
           <thead>
             <tr>
-              <th>Nom du fichier</th>
-              <th>Type</th>
-              <th>Permission</th>
-              <th>Actions</th>
+              <th scope="col">Nom du fichier</th>
+              <th scope="col">Type</th>
+              <th scope="col">Permission</th>
+              <th scope="col">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -55,7 +55,7 @@
                     <a href="{% url 'download_file' file_data.id %}" class="btn btn-sm btn-primary" title="Télécharger"><i class="fas fa-download"></i></a>
                     <form action="{% url 'delete_file' file_data.id %}" method="post" class="delete-form" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette ressource ?')">
                       {% csrf_token %}
-                      <button type="submit" class="btn btn-sm btn-danger" title="Supprimer"><i class="fas fa-trash"></i></button>
+                      <button type="submit" class="btn btn-sm btn-danger" title="Supprimer" aria-label="Supprimer la ressource {{ file_data.file.name|get_file_name }}"><i class="fas fa-trash"></i></button>
                     </form>
                   </div>
                 </td>

@@ -13,7 +13,6 @@
       <h2>Inscription</h2>
       <form class="form" action="" method="post" novalidate>
         {% csrf_token %}
-        <!-- Nom complet -->
         <div class="form-group">
           <label for="id_first_name">Nom complet</label>
           <input type="text" name="first_name" id="id_first_name" class="form-control" placeholder="Votre nom complet" aria-label="Nom complet" value="{{ user_form.first_name.value|default:'' }}" required>
@@ -21,7 +20,6 @@
             <div class="alert alert-error">{{ user_form.first_name.errors.0 }}</div>
           {% endif %}
         </div>
-        <!-- Email -->
         <div class="form-group">
           <label for="id_email">Adresse email</label>
           <input type="email" name="email" id="id_email" class="form-control" placeholder="Votre adresse email" aria-label="Adresse email" value="{{ user_form.email.value|default:'' }}" required>
@@ -29,7 +27,6 @@
             <div class="alert alert-error">{{ user_form.email.errors.0 }}</div>
           {% endif %}
         </div>
-        <!-- Mot de passe -->
         <div class="form-group">
           <label for="id_password">Mot de passe</label>
           <input type="password" name="password" id="id_password" class="form-control" placeholder="Créez un mot de passe" aria-label="Mot de passe" required>
@@ -37,7 +34,6 @@
             <div class="alert alert-error">{{ user_form.password.errors.0 }}</div>
           {% endif %}
         </div>
-        <!-- Type d'utilisateur -->
         <div class="form-group">
           <label>Vous êtes</label>
           {% for radio in profile_form.user_type %}
@@ -49,7 +45,6 @@
             <div class="alert alert-error">{{ profile_form.user_type.errors.0 }}</div>
           {% endif %}
         </div>
-        <!-- Numéro d'étudiant (affiché si étudiant) -->
         <div class="form-group" id="rollNumberSection" style="display: none;">
           <label for="id_roll_number">Numéro d'étudiant</label>
           <input type="text" name="roll_number" id="id_roll_number" class="form-control" placeholder="Numéro d'étudiant (si étudiant)" aria-label="Numéro d'étudiant" value="{{ profile_form.roll_number.value|default:'' }}">

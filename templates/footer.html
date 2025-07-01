@@ -1,6 +1,10 @@
-<footer class="main-footer text-center">
-    <div class="container">
-        <p>&copy; {{ now|date:'Y' }} Plateforme Pédagogique. Tous droits réservés.</p>
-        <p><a href="{% url 'no_access' %}">Accès refusé</a> | <a href="mailto:support@plateforme.com">Contact</a></p>
-    </div>
-</footer> 
+{% load static %}
+<footer class="main-footer text-center" role="contentinfo">
+  <div class="container">
+    <p>&copy; {{ now|date:'Y' }} Plateforme Pédagogique. Tous droits réservés.</p>
+    <p>
+      <a href="{% url 'no_access' %}">Accès refusé</a> |
+      <a href="mailto:support@plateforme.com">Contact</a>
+    </p>
+  </div>
+</footer>
