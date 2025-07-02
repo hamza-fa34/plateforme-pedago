@@ -13,7 +13,7 @@
       <nav class="nav desktop-nav" role="navigation" aria-label="Navigation principale">
         <ul class="nav-list">
           <li><a href="{% if user|is_student %}{% url 'studenthome' %}{% else %}{% url 'teacher_home' %}{% endif %}"
-                 class="nav-link btn btn-primary" style="background: #fff; color: var(--color-primary, #1a237e);">Mon Espace</a></li>
+                 class="nav-link btn btn-logout btn-rounded">Mon Espace</a></li>
           <li><a href="{% url 'logout' %}" class="nav-link btn btn-logout" style="color: #fff;">Déconnexion</a></li>
         </ul>
       </nav>
@@ -30,7 +30,8 @@
         <button class="close-menu" aria-label="Fermer le menu" type="button" style="color: #fff;">&times;</button>
         <nav class="nav mobile-nav" role="navigation" aria-label="Navigation mobile">
           <ul class="nav-list">
-            <li><a href="{% if user|is_student %}{% url 'studenthome' %}{% else %}{% url 'teacher_home' %}{% endif %}" class="nav-link btn btn-primary" style="background: #fff; color: var(--color-primary, #1a237e);">Mon Espace</a></li>
+            <li><a href="{% if user|is_student %}{% url 'studenthome' %}{% else %}{% url 'teacher_home' %}{% endif %}"
+                   class="nav-link btn btn-logout btn-rounded">Mon Espace</a></li>
             <li><a href="{% url 'logout' %}" class="nav-link btn btn-logout" style="color: #fff;">Déconnexion</a></li>
           </ul>
         </nav>
@@ -40,8 +41,8 @@
     {% else %}
       <nav class="nav desktop-nav" role="navigation" aria-label="Navigation principale">
         <ul class="nav-list">
-          <li><a href="{% url 'login' %}" class="nav-link btn btn-primary" style="background: #fff; color: var(--color-primary, #1a237e);">Connexion</a></li>
-          <li><a href="{% url 'signup' %}" class="nav-link btn btn-secondary" style="color: #fff;">Inscription</a></li>
+          <li><a href="{% url 'login' %}" class="nav-link btn btn-secondary btn-rounded" style="color: #fff;">Connexion</a></li>
+          <li><a href="{% url 'signup' %}" class="nav-link btn btn-secondary btn-rounded" style="color: #fff;">Inscription</a></li>
         </ul>
       </nav>
     {% endif %}

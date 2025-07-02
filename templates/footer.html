@@ -1,10 +1,10 @@
 {% load static %}
 <footer class="main-footer text-center" role="contentinfo">
   <div class="container">
-    <p>&copy; {{ now|date:'Y' }} Plateforme Pédagogique. Tous droits réservés.</p>
-    <p>
-      <a href="{% url 'no_access' %}">Accès refusé</a> |
-      <a href="mailto:support@plateforme.com">Contact</a>
-    </p>
+    <div class="footer-links">
+      <a href="mailto:support@plateforme.com">Contact</a> |
+      <a href="/mentions-legales/">Mentions légales</a>
+    </div>
+    <p class="footer-copyright">&copy; {{ now|date:'Y' }} Plateforme Pédagogique. Tous droits réservés.</p>
   </div>
 </footer>

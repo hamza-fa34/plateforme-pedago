@@ -1,0 +1,62 @@
+==============================
+GUIDE DE RELANCE DU PROJET SUR UN NOUVEL ORDINATEUR
+==============================
+
+1. PRÉREQUIS
+-------------
+- Installer Docker et Docker Compose (https://docs.docker.com/get-docker/)
+
+2. RÉCUPÉRER LE CODE
+---------------------
+- Cloner le dépôt du projet :
+  git clone https://github.com/hamza-fa34/plateforme-pedago.git
+- Le projet contient déjà un Dockerfile, un docker-compose.yml et un fichier d'exemple d'environnement.
+
+3. CONFIGURATION DE L'ENVIRONNEMENT
+-----------------------------------
+- Copier le fichier .env.example en .env et le remplir avec les bonnes valeurs (voir README ou demander à l'admin) :
+  cp env.txt .env
+  # ou
+  cp .env.example .env
+- Vérifier/adapter les variables (DB, Redis, Django, etc.) dans .env
+
+4. CONSTRUCTION ET LANCEMENT DES CONTENEURS
+-------------------------------------------
+- Construire et lancer tous les services (web, db, redis) :
+  docker-compose up --build
+- (Optionnel) Lancer en arrière-plan :
+  docker-compose up -d --build
+
+5. PREMIÈRE INITIALISATION DJANGO
+---------------------------------
+- Ouvrir un terminal dans le conteneur web :
+  docker-compose exec web bash
+- Appliquer les migrations :
+  python manage.py migrate
+- (Optionnel) Créer un superutilisateur :
+  python manage.py createsuperuser
+- (Optionnel) Collecter les fichiers statiques :
+  python manage.py collectstatic --noinput
+
+6. ACCÈS À L'APPLICATION
+------------------------
+- Accéder à l'application sur http://localhost:8000
+- Accéder à l'admin Django sur http://localhost:8000/admin
+
+7. COMMANDES UTILES
+-------------------
+- Arrêter les conteneurs :
+  docker-compose down
+- Voir les logs :
+  docker-compose logs -f
+- Redémarrer le service web uniquement :
+  docker-compose restart web
+
+8. POINTS D'ATTENTION
+---------------------
+- Ne jamais versionner le fichier .env avec des secrets réels.
+- Adapter les variables d'environnement pour la prod (DEBUG=False, SECRET_KEY forte, etc.).
+- Pour la prod, prévoir un reverse proxy (nginx) et la gestion HTTPS.
+
+==============================
+[Fin du guide]

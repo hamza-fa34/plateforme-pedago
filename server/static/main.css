@@ -576,11 +576,12 @@ input:focus, select:focus, textarea:focus {
 }
 
 .search-form input[type="text"] {
-  flex: 1;
-  padding: 0.75rem 1rem;
+  flex: 2;
+  min-width: 220px;
+  padding: 0.9rem 1.2rem;
   border: 2px solid var(--color-border);
-  border-radius: 6px;
-  font-size: 1rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
   transition: all 0.3s ease;
 }
 
@@ -1800,4 +1801,8 @@ input:focus, select:focus, textarea:focus {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.btn-rounded {
+  border-radius: 999px !important;
 } 

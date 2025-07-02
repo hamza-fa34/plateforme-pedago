@@ -1,28 +1,38 @@
 {% extends 'base.html' %}
-    {% load static %}
 {% load custom_filters %}
-{% block title %}Espace Étudiant - Plateforme Pédagogique{% endblock %}
+{% block title %}Espace Étudiant – Plateforme Pédagogique{% endblock %}
+
 {% block content %}
-<div class="centered-container">
-  <div class="student-card">
-    <div class="student-header">
-      <div class="header-left">
-        <img src="{% static 'logo.png' %}" alt="Logo" class="header-logo">
-        <div class="header-user">
-          <span class="user-role">Étudiant</span>
-        </div>
+<div class="dashboard-container">
+  <!-- En-tête de page -->
+  <header class="page-header">
+    <h1>Accueil Étudiant</h1>
+    <p class="welcome">Bonjour {{ user.first_name|default:user.username }}</p>
+  </header>
+
+  <!-- Section Recherche -->
+  <section class="search-section">
+    <header><h2><i class="fas fa-search"></i> Rechercher une ressource</h2></header>
+    <form method="get" action="" class="form search-form">
+      <div class="search-container">
+        <label for="search-input" class="visually-hidden">Recherche</label>
+        <input id="search-input"
+               type="text"
+               name="search"
+               class="form-control"
+               placeholder="Rechercher une ressource…"
+               value="{{ search_query }}">
+        <button type="submit" class="btn btn-primary">Rechercher</button>
       </div>
-      <div class="header-right">
-        <a href="{% url 'logout' %}" class="btn btn-logout" title="Déconnexion"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
-      </div>
-    </div>
-    <div class="resources-table-section">
-      <form class="form search-form" method="get" action="">
-        <div class="search-container">
-          <input type="text" name="search" placeholder="Rechercher une ressource..." value="{{ search_query }}">
-          <button type="submit" class="btn btn-primary">Rechercher</button>
-        </div>
-      </form>
+    </form>
+  </section>
+
+  <!-- Section Liste des ressources -->
+  <section class="resources-table-section">
+    <header class="list-header">
+      <h3><i class="fas fa-book"></i> Ressources disponibles</h3>
+    </header>
+    <div class="resources-table-wrapper">
       <table class="table-modern">
         <caption class="visually-hidden">Liste des ressources pédagogiques de l'étudiant</caption>
         <thead>
@@ -38,63 +48,65 @@
             <tr>
               <td><i class="fas fa-file-alt"></i> {{ file_data.file.name|get_file_name }}</td>
               <td>
-                {% if file_data.file.name|lower|slice:"-4:" == '.pdf' %}
-                  <span class="badge badge-pdf">PDF</span>
-                {% elif file_data.file.name|lower|slice:"-4:" == '.doc' or file_data.file.name|lower|slice:"-5:" == '.docx' %}
-                  <span class="badge badge-doc">DOC</span>
-                {% elif file_data.file.name|lower|slice:"-4:" == '.ppt' or file_data.file.name|lower|slice:"-5:" == '.pptx' %}
-                  <span class="badge badge-ppt">PPT</span>
-                {% else %}
-                  <span class="badge badge-other">AUTRE</span>
-                {% endif %}
+                {% with ext=file_data.file.name|lower %}
+                  {% if ext|slice:"-4:" == ".pdf" %}
+                    <span class="badge badge-pdf">PDF</span>
+                  {% elif ext|slice:"-4:" == ".doc" or ext|slice:"-5:" == ".docx" %}
+                    <span class="badge badge-doc">DOC</span>
+                  {% elif ext|slice:"-4:" == ".ppt" or ext|slice:"-5:" == ".pptx" %}
+                    <span class="badge badge-ppt">PPT</span>
+                  {% else %}
+                    <span class="badge badge-other">AUTRE</span>
+                  {% endif %}
+                {% endwith %}
               </td>
-              <td class="teacher-name"><i class="fas fa-user-tie"></i> {{ file_data.owner.first_name|default:file_data.owner.username }}</td>
+              <td><i class="fas fa-user-tie"></i> {{ file_data.owner.first_name|default:file_data.owner.username }}</td>
               <td>
                 <div class="action-buttons">
-                  <a href="{% url 'download_file' file_data.id %}" class="btn btn-sm btn-primary" title="Télécharger"><i class="fas fa-download"></i></a>
-                  <button class="btn btn-sm btn-outline favorite-btn" title="Ajouter aux favoris" aria-label="Ajouter la ressource {{ file_data.file.name|get_file_name }} aux favoris" data-resource-id="{{ file_data.id }}" type="button">
+                  <a href="{% url 'download_file' file_data.id %}"
+                     class="btn btn-sm btn-primary"
+                     title="Télécharger"><i class="fas fa-download"></i></a>
+                  <button type="button"
+                          class="btn btn-sm btn-outline favorite-btn"
+                          title="Ajouter aux favoris"
+                          aria-label="Ajouter {{ file_data.file.name|get_file_name }} aux favoris"
+                          data-resource-id="{{ file_data.id }}">
                     <i class="fas fa-heart{% if file_data.id in favorite_ids %} favorite{% endif %}"></i>
                   </button>
                 </div>
               </td>
             </tr>
           {% empty %}
-            <tr><td colspan="4" class="text-center text-muted">Aucune ressource disponible.</td></tr>
+            <tr>
+              <td colspan="4" class="text-center text-muted">Aucune ressource disponible.</td>
+            </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
-  </div>
+  </section>
 </div>
+
+{% endblock %}
 <script>
-document.querySelectorAll('.favorite-btn').forEach(function(btn) {
-  btn.addEventListener('click', function() {
-    const resourceId = this.getAttribute('data-resource-id');
-    fetch('{% url "toggle_favorite" %}', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'X-CSRFToken': '{{ csrf_token }}',
-      },
-      body: 'resource_id=' + resourceId
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        const icon = this.querySelector('i');
-        if (data.favorited) {
-          icon.classList.add('favorite');
-        } else {
-          icon.classList.remove('favorite');
+  document.querySelectorAll('.favorite-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const resourceId = this.dataset.resourceId;
+      fetch('{% url "toggle_favorite" %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-CSRFToken': '{{ csrf_token }}',
+        },
+        body: 'resource_id=' + resourceId
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          const icon = this.querySelector('i');
+          icon.classList.toggle('favorite', data.favorited);
         }
-      }
+      });
     });
   });
-});
 </script>
-<style>
-.fa-heart.favorite {
-  color: #e53935;
-}
-</style>
-{% endblock %}
