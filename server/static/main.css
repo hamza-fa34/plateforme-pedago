@@ -1390,8 +1390,11 @@ input:focus, select:focus, textarea:focus {
 /* Table des ressources */
 .resources-table {
   overflow-x: auto;
-  border-radius: 8px;
+  border-radius: 12px;
   border: 1px solid #dee2e6;
+  box-shadow: 0 2px 12px rgba(26,35,126,0.07);
+  margin-top: 1.5rem;
+  margin-bottom: 2.5rem;
 }
 
 .table-fullwidth {
@@ -1401,7 +1404,10 @@ input:focus, select:focus, textarea:focus {
 }
 
 .table-fullwidth th {
-  background: #f8f9fa;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: linear-gradient(90deg, #f8f9fa 80%, #e3f2fd 100%);
   padding: 1rem;
   text-align: left;
   font-weight: 600;
@@ -1831,4 +1837,65 @@ input:focus, select:focus, textarea:focus {
   filter: none !important;
   opacity: 1 !important;
   transition: color 0.2s;
+} 
+
+/* Recommandations personnalisées */
+.recommendations-list {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0 2.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+.recommendations-list li {
+  background: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(26,35,126,0.04);
+  padding: 1.1rem 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.7rem 1.2rem;
+  font-size: 1.05rem;
+}
+.recommendations-list .badge {
+  margin-right: 0.5em;
+}
+.recommendations-list .btn {
+  margin-left: auto;
+}
+
+/* Notifications */
+.notifications-list {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0 2.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.notification {
+  background: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(26,35,126,0.04);
+  padding: 0.9rem 1.2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.01rem;
+  transition: background 0.2s;
+}
+.notification.unread {
+  background: #e3f2fd;
+  font-weight: 600;
+}
+.notif-message {
+  flex: 1;
+  margin-right: 1.2em;
+}
+.notif-date {
+  color: #757575;
+  font-size: 0.97em;
+  white-space: nowrap;
 } 

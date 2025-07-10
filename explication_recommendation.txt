@@ -1,0 +1,69 @@
+# Explication du système de recommandation personnalisée
+
+La plateforme pédagogique propose à chaque étudiant des recommandations de ressources adaptées à son profil et à son historique. Voici comment fonctionne ce système :
+
+---
+
+## 1. Objectif
+Fournir à chaque étudiant des ressources pertinentes en fonction de ses intérêts, de son historique de consultation et de ses favoris.
+
+---
+
+## 2. Critères pris en compte
+- **Historique de consultation** : toutes les ressources que l’étudiant a consultées (ResourceView)
+- **Favoris** : toutes les ressources ajoutées en favoris (Favorite)
+- **Métadonnées extraites** des ressources consultées/favorisées :
+  - Mots-clés
+  - Matière
+  - Niveau
+  - Type
+  - Titre
+
+---
+
+## 3. Fonctionnement de l’algorithme
+
+1. **Récupération de l’historique**
+   - On récupère tous les IDs de ressources consultées et mises en favoris par l’étudiant.
+
+2. **Extraction des critères**
+   - Pour chaque ressource de l’historique, on extrait :
+     - Les mots-clés
+     - La matière
+     - Le niveau
+     - Le type
+     - Le titre
+
+3. **Recherche de ressources candidates**
+   - On sélectionne toutes les ressources publiques **non encore consultées/favorisées** par l’étudiant.
+
+4. **Calcul d’un score de similarité** pour chaque ressource candidate :
+   - +3 points pour chaque mot-clé en commun
+   - +2 points si la matière est la même
+   - +2 points si le niveau est le même
+   - +2 points si le type est le même
+   - +1 point si le titre est le même
+
+5. **Tri des ressources candidates** par score décroissant.
+
+6. **Sélection des meilleures recommandations** (top 5 par défaut).
+
+7. **Cas sans historique**
+   - Si l’étudiant n’a jamais consulté ni favorisé de ressource, on lui propose les ressources “trending” (les plus consultées récemment).
+
+---
+
+## 4. Résumé visuel
+
+Historique utilisateur + Favoris → Extraction des critères → Recherche de ressources publiques non vues → Score de similarité → Top recommandations
+
+---
+
+## 5. Conseils pour tester
+- Plus l’étudiant consulte ou ajoute en favoris des ressources variées, plus les recommandations seront personnalisées.
+- Si aucun historique, les recommandations affichent les ressources les plus populaires.
+- Les recommandations évoluent dynamiquement selon l’activité de l’étudiant.
+
+---
+
+**Ce système permet d’offrir une expérience personnalisée et d’aider chaque étudiant à découvrir des ressources pertinentes pour son parcours.** 

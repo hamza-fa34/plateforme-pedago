@@ -44,7 +44,7 @@
       <h3><i class="fas fa-book"></i> Ressources disponibles</h3>
     </header>
     <div class="resources-table-wrapper">
-      <table class="table-modern">
+      <table class="table-fullwidth">
         <caption class="visually-hidden">Liste des ressources pédagogiques de l'étudiant</caption>
         <thead>
           <tr>
@@ -61,12 +61,12 @@
         <tbody>
           {% for file_data in files_data %}
             <tr>
-              <td>{{ file_data.title }}</td>
-              <td>{{ file_data.subject }}</td>
-              <td>{{ file_data.level }}</td>
-              <td>{{ file_data.resource_type }}</td>
-              <td><i class="fas fa-file-alt"></i> {{ file_data.file.name|get_file_name }}</td>
-              <td>
+              <td data-label="Titre">{{ file_data.title }}</td>
+              <td data-label="Matière">{{ file_data.subject }}</td>
+              <td data-label="Niveau">{{ file_data.level }}</td>
+              <td data-label="Type">{{ file_data.resource_type }}</td>
+              <td data-label="Nom du fichier"><i class="fas fa-file-alt"></i> {{ file_data.file.name|get_file_name }}</td>
+              <td data-label="Type">
                 {% with ext=file_data.file.name|lower %}
                   {% if ext|slice:"-4:" == ".pdf" %}
                     <span class="badge badge-pdf">PDF</span>
@@ -79,8 +79,8 @@
                   {% endif %}
                 {% endwith %}
               </td>
-              <td><i class="fas fa-user-tie"></i> {{ file_data.owner.first_name|default:file_data.owner.username }}</td>
-              <td>
+              <td data-label="Enseignant"><i class="fas fa-user-tie"></i> {{ file_data.owner.first_name|default:file_data.owner.username }}</td>
+              <td data-label="Actions">
                 <div class="action-buttons">
                   <a href="{% url 'download_file' file_data.id %}"
                      class="btn btn-sm btn-primary"
