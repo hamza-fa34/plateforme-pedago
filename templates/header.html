@@ -18,6 +18,15 @@
         </ul>
       </nav>
 
+      {% if user.is_authenticated and user|is_student or user.is_authenticated and user|is_teacher %}
+        <a href="{% url 'notifications_list' %}" class="nav-link notification-link" style="position:relative; color:#fff;">
+          <i class="fas fa-bell"></i>
+          {% if notifications_unread > 0 %}
+            <span class="notification-badge">{{ notifications_unread }}</span>
+          {% endif %}
+        </a>
+      {% endif %}
+
       <!-- Mobile Navigation Toggle -->
       <button class="burger-menu" aria-label="Ouvrir le menu" aria-controls="mobileMenu" aria-expanded="false" type="button" style="color: #fff;">
         <span class="burger-bar"></span>

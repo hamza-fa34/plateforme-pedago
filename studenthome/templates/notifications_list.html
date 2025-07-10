@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Notifications – Plateforme Pédagogique{% endblock %}
+{% block content %}
+<div class="dashboard-container">
+  <header class="page-header">
+    <h1>Notifications</h1>
+  </header>
+  <section class="notifications-section">
+    {% if notifications %}
+      <ul class="notifications-list">
+        {% for notif in notifications %}
+          <li class="notification{% if not notif.is_read %} unread{% endif %}">
+            <span class="notif-message">{{ notif.message }}</span>
+            <span class="notif-date">{{ notif.created_at|date:'d/m/Y H:i' }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>Aucune notification pour le moment.</p>
+    {% endif %}
+  </section>
+</div>
+{% endblock %} 

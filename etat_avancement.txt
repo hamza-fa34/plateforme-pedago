@@ -82,6 +82,11 @@ Date : [À compléter]
 - Tests : **à faire**.
 - Documentation : **à compléter**.
 
+Mises à jour récentes :
+- Favoris étudiant : fonctionnement dynamique et retour visuel validé.
+- Modification de ressource enseignant : accès, édition, redirection et annulation validés.
+- Cohérence des routes et des redirections vérifiée et corrigée (teacher_home).
+
 ---
 
 **Conclusion** :

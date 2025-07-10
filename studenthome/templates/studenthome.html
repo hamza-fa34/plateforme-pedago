@@ -2,6 +2,17 @@
 {% load custom_filters %}
 {% block title %}Espace Étudiant – Plateforme Pédagogique{% endblock %}
 
+{% block extra_head %}
+<style>
+.fa-heart.favorite, .fas.fa-heart.favorite, .fa.fa-heart.favorite, .fa-solid.fa-heart.favorite {
+  color: #e53935 !important;
+  filter: none !important;
+  opacity: 1 !important;
+  transition: color 0.2s;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="dashboard-container">
   <!-- En-tête de page -->
@@ -37,6 +48,10 @@
         <caption class="visually-hidden">Liste des ressources pédagogiques de l'étudiant</caption>
         <thead>
           <tr>
+            <th scope="col">Titre</th>
+            <th scope="col">Matière</th>
+            <th scope="col">Niveau</th>
+            <th scope="col">Type</th>
             <th scope="col">Nom du fichier</th>
             <th scope="col">Type</th>
             <th scope="col">Enseignant</th>
@@ -46,6 +61,10 @@
         <tbody>
           {% for file_data in files_data %}
             <tr>
+              <td>{{ file_data.title }}</td>
+              <td>{{ file_data.subject }}</td>
+              <td>{{ file_data.level }}</td>
+              <td>{{ file_data.resource_type }}</td>
               <td><i class="fas fa-file-alt"></i> {{ file_data.file.name|get_file_name }}</td>
               <td>
                 {% with ext=file_data.file.name|lower %}
@@ -71,42 +90,125 @@
                           title="Ajouter aux favoris"
                           aria-label="Ajouter {{ file_data.file.name|get_file_name }} aux favoris"
                           data-resource-id="{{ file_data.id }}">
-                    <i class="fas fa-heart{% if file_data.id in favorite_ids %} favorite{% endif %}"></i>
+                    <i class="fas fa-heart{% if file_data.id in favorite_ids %} favorite{% endif %}"{% if file_data.id in favorite_ids %} style="color:#e53935 !important;"{% endif %}></i>
                   </button>
                 </div>
               </td>
             </tr>
           {% empty %}
             <tr>
-              <td colspan="4" class="text-center text-muted">Aucune ressource disponible.</td>
+              <td colspan="8" class="text-center text-muted">Aucune ressource disponible.</td>
             </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
   </section>
+
+  <!-- Section Recommandations personnalisées -->
+  <section class="recommendations-section">
+    <header><h2><i class="fas fa-magic"></i> Recommandations pour vous</h2></header>
+    {% if recommendations %}
+      <ul class="recommendations-list">
+        {% for reco in recommendations %}
+          <li>
+            <i class="fas fa-file-alt"></i> {{ reco.file.name|get_file_name }}
+            <span class="badge badge-other">{{ reco.owner.first_name|default:reco.owner.username }}</span>
+            {% if reco.title %}<span class="badge badge-info">Titre : {{ reco.title }}</span>{% endif %}
+            {% if reco.subject %}<span class="badge badge-info">Matière : {{ reco.subject }}</span>{% endif %}
+            {% if reco.level %}<span class="badge badge-info">Niveau : {{ reco.level }}</span>{% endif %}
+            {% if reco.resource_type %}<span class="badge badge-info">Type : {{ reco.resource_type }}</span>{% endif %}
+            {% if reco.keywords %}
+              <span class="badge badge-pdf">Mots-clés : {{ reco.keywords|join:", " }}</span>
+            {% endif %}
+            <a href="{% url 'download_file' reco.id %}" class="btn btn-sm btn-primary">Télécharger</a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>Aucune recommandation personnalisée pour le moment.</p>
+    {% endif %}
+  </section>
 </div>
 
 {% endblock %}
+
+{% block extra_body %}
 <script>
-  document.querySelectorAll('.favorite-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const resourceId = this.dataset.resourceId;
-      fetch('{% url "toggle_favorite" %}', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'X-CSRFToken': '{{ csrf_token }}',
-        },
-        body: 'resource_id=' + resourceId
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          const icon = this.querySelector('i');
-          icon.classList.toggle('favorite', data.favorited);
-        }
+  console.log('=== DEBUG FAVORIS ===');
+  console.log('CSRF Token:', '{{ csrf_token }}');
+  console.log('URL toggle_favorite:', '{% url "toggle_favorite" %}');
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM chargé');
+    
+    const favoriteButtons = document.querySelectorAll('.favorite-btn');
+    console.log('Nombre de boutons favoris trouvés:', favoriteButtons.length);
+    
+    favoriteButtons.forEach((btn, index) => {
+      console.log(`Bouton ${index}:`, btn);
+      console.log(`  - Resource ID:`, btn.dataset.resourceId);
+      console.log(`  - Icon:`, btn.querySelector('i'));
+      
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        console.log('=== CLIC SUR FAVORI ===');
+        console.log('Resource ID:', this.dataset.resourceId);
+        console.log('Bouton cliqué:', this);
+        
+        const resourceId = this.dataset.resourceId;
+        const csrfToken = '{{ csrf_token }}';
+        
+        // Créer les données de la requête
+        const formData = new URLSearchParams();
+        formData.append('resource_id', resourceId);
+        
+        console.log('Données envoyées:', formData.toString());
+        
+        fetch('{% url "toggle_favorite" %}', {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': csrfToken,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: formData
+        })
+        .then(res => {
+          console.log('Réponse HTTP:', res.status, res.statusText);
+          if (!res.ok) {
+            throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+          }
+          return res.json();
+        })
+        .then(data => {
+          console.log('Données reçues:', data);
+          if (data.success) {
+            const icon = this.querySelector('i');
+            console.log('Icône trouvée:', icon);
+            console.log('Classes avant:', icon.className);
+            
+            if (data.favorited) {
+              icon.classList.add('favorite');
+              icon.style.color = '#e53935';
+              console.log('✅ Favori ajouté - cœur rouge');
+              console.log('Classes après:', icon.className);
+            } else {
+              icon.classList.remove('favorite');
+              icon.style.color = '';
+              console.log('❌ Favori retiré - cœur normal');
+              console.log('Classes après:', icon.className);
+            }
+          } else {
+            console.error('❌ Erreur:', data.error);
+          }
+        })
+        .catch(error => {
+          console.error('❌ Erreur AJAX:', error);
+        });
       });
     });
   });
 </script>
+{% endblock %}

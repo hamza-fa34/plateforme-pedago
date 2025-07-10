@@ -1,0 +1,102 @@
+==============================
+AUDIT GÉNÉRAL DU PROJET PLATEFORME PÉDAGOGIQUE
+==============================
+
+---
+
+1. OBJECTIF DU PROJET
+---------------------
+Créer une plateforme web éducative permettant :
+- Aux enseignants de partager/classer des ressources pédagogiques.
+- Aux étudiants de rechercher, consulter, enregistrer des ressources et recevoir des recommandations personnalisées.
+- Extraction automatique de mots-clés sur les ressources.
+- Notifications pour les événements importants.
+
+---
+
+2. INVENTAIRE DES FONCTIONNALITÉS
+----------------------------------
+
+A. Authentification & Gestion des comptes
+- Inscription, connexion, déconnexion.
+- Mot de passe oublié.
+- Gestion des rôles : étudiant, enseignant, admin.
+- Redirection automatique selon le rôle.
+- Sécurité : validation des mots de passe, protection CSRF, permissions.
+
+B. Espace Enseignant
+- Tableau de bord personnel.
+- Ajout/upload de ressources pédagogiques (PDF, DOC, PPT, TXT, ZIP, RAR…).
+- Classement des ressources : titre, matière, niveau, type.
+- Extraction automatique de mots-clés (NLP avec YAKE sur PDF).
+- Visualisation, recherche, suppression, téléchargement de ses ressources.
+- Permissions fines (public/privé).
+
+C. Espace Étudiant
+- Tableau de bord personnel.
+- Recherche avancée de ressources (par nom, mot-clé, matière, niveau, type…).
+- Consultation et téléchargement de ressources publiques.
+- Ajout/suppression de ressources en favoris.
+- Liste personnelle de favoris.
+- Accès aux ressources “trending” 
+- Historique de consultation (ResourceView).
+- Recommandations personnalisées : algorithme basé sur historique, favoris, mots-clés, matière, niveau, type.
+- Notifications (nouvelle ressource, nouvelle recommandation).
+
+D. Notifications
+- Modèle Notification, page de notifications, badge de notifications non lues dans le header.
+- Génération automatique lors d’un upload de ressource publique ou d’une nouvelle recommandation personnalisée.
+
+E. Fonctionnalités transverses & système
+- Gestion des erreurs personnalisées (no_access, 404, CSRF).
+- Sécurité : gestion des permissions, accès restreint selon le rôle.
+- Gestion des fichiers statiques et médias (organisation par app, collecte, Docker ready).
+- Administration Django.
+- Configuration avancée (PostgreSQL, Redis pour cache, variables d’environnement sécurisées).
+- Dockerisation complète (Dockerfile, docker-compose).
+
+---
+
+3. CONFORMITÉ AU CAHIER DES CHARGES
+------------------------------------
+
+| Fonctionnalité attendue (cahier des charges)         | Statut actuel         | Remarques |
+|------------------------------------------------------|-----------------------|-----------|
+| Comptes enseignants/étudiants (inscription, login)   | OK                    |           |
+| Ajout de ressources par enseignant                   | OK                    | Multi-format |
+| Classement (titre, matière, niveau, type)            | OK                    | Champs présents |
+| Extraction automatique de mots-clés                  | OK                    | YAKE, extensible |
+| Visualisation des mots-clés                          | OK                    | Affiché |
+| Gestion des ressources (modifier, supprimer)         | OK                    |
+| Recherche de ressources (titre, mot-clé, matière…)   | OK                    | Recherche avancée |
+| Consultation de ressources                           | OK                    | Permissions respectées |
+| Enregistrement de ressources par étudiant (favoris)  | OK                    | Système de favoris |
+| Recommandations personnalisées                       | OK                    | Algorithme avancé |
+| Historique étudiant (clics, consultations)           | OK                    | ResourceView |
+| Notifications                                        | OK                    | Badge, page, génération auto |
+
+---
+
+4. POINTS FORTS
+----------------
+- Respect du cahier des charges (toutes les fonctionnalités principales sont présentes).
+- Expérience utilisateur moderne : interface claire, responsive, informations bien mises en avant.
+- Sécurité : gestion des rôles, accès, CSRF, permissions sur les ressources.
+- Modularité : séparation claire des apps, code maintenable.
+- Notifications et personnalisation : système moderne, notifications contextuelles, recommandations pertinentes.
+- Scalabilité : Docker, Redis, PostgreSQL, gestion des fichiers statiques/médias.
+
+---
+
+5. AXES D’AMÉLIORATION POTENTIELS
+----------------------------------
+- Tests automatisés : à implémenter pour garantir la robustesse.
+- Documentation : README et guide utilisateur/développeur à compléter.
+- Normalisation des valeurs de classement (matière, niveau, type) : listes déroulantes ou suggestions pour éviter les fautes de frappe.
+- Accessibilité (a11y) : à tester pour garantir l’accès à tous.
+- Analytics/Statistiques : pour les enseignants/admins (optionnel).
+
+Mises à jour récentes :
+- Système de favoris étudiant : fonctionnement dynamique et retour visuel validé.
+- Modification de ressource enseignant : accès, édition, redirection et annulation validés.
+- Cohérence des routes et des redirections vérifiée et corrigée (teacher_home).

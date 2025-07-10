@@ -6,6 +6,7 @@ from login.models import UserProfile
 from django.http import HttpResponse
 from wsgiref.util import FileWrapper
 from mimetypes import guess_type
+from studenthome.views import create_notification
 
 @login_required
 def teacher_home(request):
@@ -39,10 +40,15 @@ def upload_form(request):
     if request.method == 'POST':
         form = FileModelForm(request.POST, request.FILES)
         if form.is_valid():
-            resource_instance = form.save(commit=False)
-            resource_instance.owner = request.user
-            resource_instance.email = request.user.email
-            resource_instance.save()
+            resource = form.save(commit=False)
+            resource.owner = request.user
+            resource.email = request.user.email
+            resource.save()
+            # Notifier tous les étudiants d'une nouvelle ressource publique
+            if resource.permission == 1:
+                students = UserProfile.objects.filter(user_type='student').select_related('user')
+                for student in students:
+                    create_notification(student.user, f"Nouvelle ressource disponible : {resource.file.name}")
             return redirect('teacher_home')
     # Si ce n'est pas un POST, on redirige simplement vers la home
     return redirect('teacher_home')
@@ -69,6 +75,22 @@ def delete_file(request, file_id):
         resource_to_delete.delete() # Supprime l'entrée en base de données
         
     return redirect('teacher_home')
+
+@login_required
+def edit_resource(request, resource_id):
+    from .models import Resource
+    from .forms import FileModelForm
+    from login.models import UserProfile
+    resource = get_object_or_404(Resource, id=resource_id, owner=request.user)
+    if request.method == 'POST':
+        form = FileModelForm(request.POST, request.FILES, instance=resource)
+        if form.is_valid():
+            form.save()
+            return redirect('teacher_home')
+    else:
+        form = FileModelForm(instance=resource)
+    profile = UserProfile.objects.get(user=request.user)
+    return render(request, 'edit_resource.html', {'form': form, 'resource': resource, 'profile': profile})
 
 def get_teacher_name_and_id(uploaded_by):
     try:

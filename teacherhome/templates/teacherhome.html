@@ -21,8 +21,12 @@
           <caption class="visually-hidden">Liste des ressources pédagogiques de l'enseignant</caption>
           <thead>
             <tr>
-              <th scope="col">Nom du fichier</th>
+              <th scope="col">Titre</th>
+              <th scope="col">Matière</th>
+              <th scope="col">Niveau</th>
               <th scope="col">Type</th>
+              <th scope="col">Nom du fichier</th>
+              <th scope="col">Type fichier</th>
               <th scope="col">Permission</th>
               <th scope="col">Actions</th>
             </tr>
@@ -30,6 +34,10 @@
           <tbody>
             {% for file_data in files_data %}
               <tr>
+                <td>{{ file_data.title }}</td>
+                <td>{{ file_data.subject }}</td>
+                <td>{{ file_data.level }}</td>
+                <td>{{ file_data.resource_type }}</td>
                 <td><i class="fas fa-file-alt"></i> {{ file_data.file.name|get_file_name }}</td>
                 <td>
                   {% with ext=file_data.file.name|lower %}
@@ -56,6 +64,9 @@
                     <a href="{% url 'download_file' file_data.id %}"
                        class="btn btn-sm btn-primary"
                        title="Télécharger"><i class="fas fa-download"></i></a>
+                    <a href="{% url 'edit_resource' file_data.id %}"
+                       class="btn btn-sm btn-warning"
+                       title="Modifier"><i class="fas fa-edit"></i></a>
                     <form action="{% url 'delete_file' file_data.id %}"
                           method="post"
                           class="delete-form"
@@ -73,7 +84,7 @@
               </tr>
             {% empty %}
               <tr>
-                <td colspan="4" class="text-center text-muted">Aucune ressource disponible.</td>
+                <td colspan="8" class="text-center text-muted">Aucune ressource disponible.</td>
               </tr>
             {% endfor %}
           </tbody>
@@ -89,6 +100,42 @@
             enctype="multipart/form-data"
             class="form upload-form">
         {% csrf_token %}
+        <div class="form-group">
+          <label for="{{ form.title.id_for_label }}">Titre</label>
+          <input type="text"
+                 name="{{ form.title.name }}"
+                 id="{{ form.title.id_for_label }}"
+                 class="form-control"
+                 maxlength="255"
+                 placeholder="Titre de la ressource">
+        </div>
+        <div class="form-group">
+          <label for="{{ form.subject.id_for_label }}">Matière</label>
+          <input type="text"
+                 name="{{ form.subject.name }}"
+                 id="{{ form.subject.id_for_label }}"
+                 class="form-control"
+                 maxlength="100"
+                 placeholder="Matière (ex: Mathématiques)">
+        </div>
+        <div class="form-group">
+          <label for="{{ form.level.id_for_label }}">Niveau</label>
+          <input type="text"
+                 name="{{ form.level.name }}"
+                 id="{{ form.level.id_for_label }}"
+                 class="form-control"
+                 maxlength="100"
+                 placeholder="Niveau (ex: Licence 1)">
+        </div>
+        <div class="form-group">
+          <label for="{{ form.resource_type.id_for_label }}">Type</label>
+          <input type="text"
+                 name="{{ form.resource_type.name }}"
+                 id="{{ form.resource_type.id_for_label }}"
+                 class="form-control"
+                 maxlength="50"
+                 placeholder="Type (ex: Cours, TD, TP)">
+        </div>
         <div class="form-group">
           <label for="{{ form.file.id_for_label }}">Fichier</label>
           <input type="file"
