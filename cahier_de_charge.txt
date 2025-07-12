@@ -85,17 +85,19 @@ Développer une plateforme web éducative moderne permettant aux enseignants de 
   * Mots-clés des ressources consultées
   * Matière, niveau et type de ressources
 - Notifications pour nouvelles recommandations
+- Système de recommandations et notifications testé et validé avec des comptes multiples et ressources multi-professeurs
 
 2.4 Système de notifications
 ---------------------------
 ✅ **Fonctionnalités réalisées :**
 - Modèle de données pour les notifications
-- Page dédiée aux notifications
+- Page dédiée aux notifications (design modernisé, badges, responsive)
 - Badge de notifications non lues dans le header
 - Génération automatique lors d'événements :
   * Upload de nouvelle ressource publique
   * Nouvelle recommandation personnalisée
 - Marquage automatique comme "lues"
+- Système testé et validé avec des comptes multiples et ressources multi-professeurs
 
 2.5 Fonctionnalités transverses
 ------------------------------
@@ -167,6 +169,7 @@ plateforme-pedago/
 - Correspondance par mots-clés
 - Prise en compte des préférences (matière, niveau, type)
 - Génération automatique de nouvelles recommandations
+- Système testé et validé avec des comptes multiples et ressources multi-professeurs
 
 4.3 Système de trending
 -----------------------

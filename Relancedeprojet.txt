@@ -37,6 +37,9 @@ GUIDE DE RELANCE DU PROJET SUR UN NOUVEL ORDINATEUR
   python manage.py createsuperuser
 - (Optionnel) Collecter les fichiers statiques :
   python manage.py collectstatic --noinput
+- Peupler la base avec des comptes de test et ressources :
+  docker-compose exec web python populate_resources.py
+  (Crée automatiquement 10 enseignants, 50 étudiants, mot de passe Azerty123@, et 50 ressources multi-professeurs)
 
 6. ACCÈS À L'APPLICATION
 ------------------------

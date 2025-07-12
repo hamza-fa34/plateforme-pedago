@@ -31,6 +31,7 @@ B. Espace Enseignant
 - Extraction automatique de mots-clés (NLP avec YAKE sur PDF).
 - Visualisation, recherche, suppression, téléchargement de ses ressources.
 - Permissions fines (public/privé).
+- **Gestion multi-professeurs : chaque ressource peut être émise par un enseignant différent.**
 
 C. Espace Étudiant
 - Tableau de bord personnel.
@@ -41,10 +42,12 @@ C. Espace Étudiant
 - Accès aux ressources “trending” 
 - Historique de consultation (ResourceView).
 - Recommandations personnalisées : algorithme basé sur historique, favoris, mots-clés, matière, niveau, type.
+- **Recommandations testées et validées avec des comptes multiples et des ressources variées.**
 - Notifications (nouvelle ressource, nouvelle recommandation).
 
 D. Notifications
 - Modèle Notification, page de notifications, badge de notifications non lues dans le header.
+- **Page notifications modernisée : design responsive, badges, icônes, affichage clair des non lues.**
 - Génération automatique lors d’un upload de ressource publique ou d’une nouvelle recommandation personnalisée.
 
 E. Fonctionnalités transverses & système
@@ -63,7 +66,7 @@ E. Fonctionnalités transverses & système
 | Fonctionnalité attendue (cahier des charges)         | Statut actuel         | Remarques |
 |------------------------------------------------------|-----------------------|-----------|
 | Comptes enseignants/étudiants (inscription, login)   | OK                    |           |
-| Ajout de ressources par enseignant                   | OK                    | Multi-format |
+| Ajout de ressources par enseignant                   | OK                    | Multi-format, multi-professeurs |
 | Classement (titre, matière, niveau, type)            | OK                    | Champs présents |
 | Extraction automatique de mots-clés                  | OK                    | YAKE, extensible |
 | Visualisation des mots-clés                          | OK                    | Affiché |
@@ -71,9 +74,9 @@ E. Fonctionnalités transverses & système
 | Recherche de ressources (titre, mot-clé, matière…)   | OK                    | Recherche avancée |
 | Consultation de ressources                           | OK                    | Permissions respectées |
 | Enregistrement de ressources par étudiant (favoris)  | OK                    | Système de favoris |
-| Recommandations personnalisées                       | OK                    | Algorithme avancé |
+| Recommandations personnalisées                       | OK                    | Algorithme avancé, validé multi-comptes |
 | Historique étudiant (clics, consultations)           | OK                    | ResourceView |
-| Notifications                                        | OK                    | Badge, page, génération auto |
+| Notifications                                        | OK                    | Badge, page, génération auto, design modernisé |
 
 ---
 
@@ -100,3 +103,4 @@ Mises à jour récentes :
 - Système de favoris étudiant : fonctionnement dynamique et retour visuel validé.
 - Modification de ressource enseignant : accès, édition, redirection et annulation validés.
 - Cohérence des routes et des redirections vérifiée et corrigée (teacher_home).
+- **Notifications et recommandations testées et validées avec des comptes de test générés automatiquement.**

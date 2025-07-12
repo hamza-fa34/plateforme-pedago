@@ -28,6 +28,7 @@ Date : [À compléter]
 - studenthome : modèle Favorite pour les favoris d'un utilisateur sur une ressource.
 - teacherhome : modèle Resource (ressources uploadées par les enseignants), ResourceView (historique des vues).
 - Modèles simples, bien structurés, relations claires.
+- **Comptes de test générés automatiquement pour les démos et tests (enseignants et étudiants).**
 
 4. VUES & LOGIQUE MÉTIER
 ------------------------
@@ -37,6 +38,8 @@ Date : [À compléter]
 - teacherhome : gestion des ressources de l'enseignant, upload, suppression, téléchargement, recherche.
 - Contrôle d'accès par décorateur @login_required et vérification du type d'utilisateur.
 - Gestion des erreurs d'accès (no_access) et 404 personnalisée (not_found).
+- **Page notifications modernisée (badges, icônes, responsive, affichage clair des non lues).**
+- **Système de recommandations logiques, validé avec des comptes multiples et des ressources variées.**
 
 5. ROUTAGE
 ----------
@@ -79,6 +82,8 @@ Date : [À compléter]
 - Gestion des ressources (upload, favoris, trending, suppression, téléchargement) : **fonctionnelle**.
 - Sécurité de base et gestion des accès : **en place**.
 - UI principale : **propre et responsive** (après corrections).
+- Notifications : **page modernisée, testée avec comptes multiples**.
+- Recommandations : **logiques, validées avec des comptes de test**.
 - Tests : **à faire**.
 - Documentation : **à compléter**.
 
@@ -86,6 +91,7 @@ Mises à jour récentes :
 - Favoris étudiant : fonctionnement dynamique et retour visuel validé.
 - Modification de ressource enseignant : accès, édition, redirection et annulation validés.
 - Cohérence des routes et des redirections vérifiée et corrigée (teacher_home).
+- **Notifications et recommandations testées et validées avec des comptes de test générés automatiquement.**
 
 ---
 

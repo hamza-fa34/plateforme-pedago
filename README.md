@@ -24,15 +24,51 @@ La plateforme, dans sa version MVP, propose uniquement les fonctionnalités suiv
 
 ---
 
-## 🚧 Backlog futur (hors périmètre MVP)
+## 🚀 Installation & Lancement
 
-Les fonctionnalités suivantes sont reportées à une phase ultérieure :
+### Prérequis
+- Docker et Docker Compose installés
 
-- Modules « Cours », « Devoirs », « Notifications » temps réel
-- Gestion avancée des étudiants, évaluations, progression
-- API REST, PWA, mode sombre, marketplace, analytics avancés, IA, etc.
-- Paramètres utilisateur avancés
-- Toute autre fonctionnalité non listée dans le MVP
+### 1. Cloner le dépôt
+```sh
+git clone https://github.com/hamza-fa34/plateforme-pedago.git
+cd plateforme-pedago
+```
+
+### 2. Configurer l'environnement
+```sh
+cp env.example.txt .env
+# Adapter les variables si besoin
+```
+
+### 3. Lancer les conteneurs
+```sh
+docker-compose up --build
+```
+
+### 4. Peupler la base avec des comptes de test et ressources
+```sh
+docker-compose exec web python populate_resources.py
+```
+- Crée 10 enseignants (`teacher1` à `teacher10`), 50 étudiants (`student1` à `student50`), mot de passe `Azerty123@`.
+- Génère 50 ressources réparties entre plusieurs professeurs.
+
+### 5. Accéder à l'application
+- http://localhost:8000
+- Admin Django : http://localhost:8000/admin
+
+### 6. Commandes utiles
+- Arrêter les conteneurs : `docker-compose down`
+- Voir les logs : `docker-compose logs -f`
+- Redémarrer le service web : `docker-compose restart web`
+
+---
+
+## 🔔 Fonctionnalités avancées
+- Système de notifications moderne (page dédiée, badge, design responsive)
+- Recommandations personnalisées logiques et évolutives selon l'activité de l'étudiant
+- Gestion multi-professeurs pour les ressources
+- Comptes de test générés automatiquement pour faciliter les démos et tests
 
 ---
 
@@ -53,12 +89,6 @@ Les fonctionnalités suivantes sont reportées à une phase ultérieure :
 - Réintégration progressive des modules avancés (cours, devoirs, notifications, etc.)
 - Déploiement d'API, PWA, analytics, IA, etc.
 - Améliorations majeures selon retours utilisateurs
-
----
-
-## 📦 Installation & Lancement
-
-(Instructions d'installation et de lancement à compléter selon le projet)
 
 ---
 

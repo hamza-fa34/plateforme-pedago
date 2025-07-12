@@ -183,6 +183,10 @@ def toggle_favorite(request):
 @login_required
 def notifications_list(request):
     notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
+    unread_count = notifications.filter(is_read=False).count()
     # Marquer comme lues
     notifications.update(is_read=True)
-    return render(request, 'notifications_list.html', {'notifications': notifications})
+    return render(request, 'notifications_list.html', {
+        'notifications': notifications,
+        'unread_count': unread_count,
+    })

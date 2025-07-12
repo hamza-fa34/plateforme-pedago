@@ -3,20 +3,71 @@
 {% block content %}
 <div class="dashboard-container">
   <header class="page-header">
-    <h1>Notifications</h1>
+    <h1><i class="fas fa-bell"></i> Notifications</h1>
+    <p class="text-muted">Gérez vos notifications et restez informé des nouveautés</p>
   </header>
+  
   <section class="notifications-section">
     {% if notifications %}
+      <div class="notifications-header">
+        <div class="notifications-stats">
+          <span class="badge badge-primary">{{ notifications|length }} notification{{ notifications|length|pluralize }}</span>
+          {% if unread_count > 0 %}
+            <span class="badge badge-warning">{{ unread_count }} non lue{{ unread_count|pluralize }}</span>
+          {% endif %}
+        </div>
+      </div>
+      
       <ul class="notifications-list">
         {% for notif in notifications %}
           <li class="notification{% if not notif.is_read %} unread{% endif %}">
-            <span class="notif-message">{{ notif.message }}</span>
-            <span class="notif-date">{{ notif.created_at|date:'d/m/Y H:i' }}</span>
+            <div class="notification-content">
+              <div class="notification-icon">
+                {% if "recommandation" in notif.message|lower %}
+                  <i class="fas fa-magic"></i>
+                {% elif "nouvelle ressource" in notif.message|lower %}
+                  <i class="fas fa-file-alt"></i>
+                {% elif "favori" in notif.message|lower %}
+                  <i class="fas fa-heart"></i>
+                {% else %}
+                  <i class="fas fa-bell"></i>
+                {% endif %}
+              </div>
+              <div class="notification-details">
+                <span class="notif-message">{{ notif.message }}</span>
+                <span class="notif-date">
+                  <i class="fas fa-clock"></i>
+                  {{ notif.created_at|date:'d/m/Y à H:i' }}
+                </span>
+              </div>
+              <div class="notification-status">
+                {% if not notif.is_read %}
+                  <span class="badge badge-warning">Nouveau</span>
+                {% else %}
+                  <span class="badge badge-secondary">Lu</span>
+                {% endif %}
+              </div>
+            </div>
           </li>
         {% endfor %}
       </ul>
+      
+      <div class="notifications-footer">
+        <p class="text-muted">
+          <i class="fas fa-info-circle"></i>
+          Les notifications sont automatiquement marquées comme lues lors de la consultation.
+        </p>
+      </div>
     {% else %}
-      <p>Aucune notification pour le moment.</p>
+      <div class="empty-state">
+        <div class="empty-icon">
+          <i class="fas fa-bell-slash"></i>
+        </div>
+        <div class="empty-text">Aucune notification</div>
+        <div class="empty-subtext">
+          Vous n'avez pas encore de notifications. Elles apparaîtront ici lorsque vous recevrez des recommandations ou des nouveautés.
+        </div>
+      </div>
     {% endif %}
   </section>
 </div>
