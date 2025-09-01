@@ -2,8 +2,6 @@ from django.contrib import admin
 from django.contrib.auth.models import Group
 from .models import UserProfile
 
-# Masquer la gestion des groupes dans l'admin
-admin.site.unregister(Group)
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):

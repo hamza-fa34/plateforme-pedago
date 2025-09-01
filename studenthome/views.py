@@ -87,10 +87,15 @@ def studentHome(request):
     resources = Resource.objects.filter(permission=1)
 
     if search_query:
-        # Advanced search: look in filename OR in keywords
+        # Recherche avancée : titre, matière, niveau, type, nom du fichier, mots-clés, enseignant
         resources = resources.filter(
-            Q(file__icontains=search_query) | 
-            Q(keywords__icontains=search_query)
+            Q(title__icontains=search_query) |
+            Q(subject__icontains=search_query) |
+            Q(level__icontains=search_query) |
+            Q(resource_type__icontains=search_query) |
+            Q(file__icontains=search_query) |
+            Q(keywords__icontains=search_query) |
+            Q(owner__username__icontains=search_query)
         ).distinct()
 
     # --- Trending Resources Logic ---

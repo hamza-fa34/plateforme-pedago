@@ -4,7 +4,7 @@
 <header class="main-header" role="banner" style="background: var(--color-primary, #1a237e); color: #fff;">
   <div class="container header-flex">
     <a href="{% if user.is_authenticated %}{% if user|is_student %}{% url 'studenthome' %}{% else %}{% url 'teacher_home' %}{% endif %}{% else %}/{% endif %}" class="header-brand" style="color: #fff;">
-      <img src="{% static 'logo.png' %}" alt="Logo" class="logo-img">
+  <img src="{% static 'staticfiles/logo.png' %}" alt="Logo" class="logo-img">
       <span class="logo-text">Plateforme Pédagogique</span>
     </a>
 
