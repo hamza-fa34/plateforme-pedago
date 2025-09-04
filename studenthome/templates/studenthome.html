@@ -18,23 +18,32 @@
   <!-- En-tête de page -->
   <header class="page-header">
     <h1>Accueil Étudiant</h1>
-    <p class="welcome">Bonjour {{ user.first_name|default:user.username }}</p>
+    <p class="welcome" style="font-size:1.2rem; font-weight:500; margin-top:0.5rem; display:flex; align-items:center; gap:0.5rem;">
+      <i class="fas fa-user-circle" style="font-size:1.5rem; color:#1a237e;"></i>
+      Bonjour
+      <span style="color:#1a237e; font-weight:700;">
+        {% if user.first_name and user.last_name %}
+          {{ user.first_name }} {{ user.last_name }}
+        {% elif user.first_name %}
+          {{ user.first_name }}
+        {% else %}
+          {{ user.username }}
+        {% endif %}
+      </span>
+    </p>
   </header>
 
-  <!-- Section Recherche -->
-  <section class="search-section">
-    <header><h2><i class="fas fa-search"></i> Rechercher une ressource</h2></header>
-    <form method="get" action="" class="form search-form">
-      <div class="search-container">
-        <label for="search-input" class="visually-hidden">Recherche</label>
-        <input id="search-input"
-               type="text"
-               name="search"
-               class="form-control"
-               placeholder="Rechercher une ressource…"
-               value="{{ search_query }}">
-        <button type="submit" class="btn btn-primary">Rechercher</button>
-      </div>
+  <!-- Section Recherche simplifiée -->
+  <section class="search-section" style="display:flex; justify-content:center; align-items:center; margin:2rem 0;">
+    <form method="get" action="" class="form search-form" style="display:flex; gap:0.5rem;">
+      <input id="search-input"
+             type="text"
+             name="search"
+             class="form-control"
+             placeholder="Rechercher une ressource…"
+             value="{{ search_query }}"
+             style="min-width:250px;">
+      <button type="submit" class="btn btn-primary">Rechercher</button>
     </form>
   </section>
 
@@ -45,7 +54,6 @@
     </header>
     <div class="resources-table-wrapper">
       <table class="table-fullwidth">
-        <caption class="visually-hidden">Liste des ressources pédagogiques de l'étudiant</caption>
         <thead>
           <tr>
             <th scope="col">Titre</th>
