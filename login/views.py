@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.contrib import messages
 from django.contrib.auth.models import User
 from .models import UserProfile
 from .forms import UserForm, UserProfileForm, LoginForm
@@ -19,9 +20,14 @@ def signup(request):
             profile.name = user_form.cleaned_data['first_name']
             if profile_form.cleaned_data['user_type'] == 'student':
                 profile.roll_number = profile_form.cleaned_data['roll_number']
+                profile.niveau = profile_form.cleaned_data.get('niveau', '')
+                profile.filiere = profile_form.cleaned_data.get('filiere', '')
             profile.save()
 
+            messages.success(request, 'Votre compte a été créé avec succès. Vous pouvez maintenant vous connecter.')
             return redirect('login')
+        else:
+            messages.error(request, 'Veuillez corriger les erreurs ci-dessous.')
     else:
         user_form = UserForm()
         profile_form = UserProfileForm()
@@ -31,7 +37,7 @@ def signup(request):
         'profile_form': profile_form
     })
 
-def login(request):
+def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -49,36 +55,26 @@ def login(request):
                     else:
                         return redirect('no_access')
                 except UserProfile.DoesNotExist:
-                    return render(request, 'index.html', {
-                        'form': form,
-                        'error_message': "Aucun profil utilisateur associé à ce compte. Contactez l'administrateur."
-                    })
+                    messages.error(request, "Aucun profil utilisateur associé à ce compte. Contactez l'administrateur.")
+                    return render(request, 'index.html', {'form': form})
             else:
-                return render(request, 'index.html', {
-                    'form': form,
-                    'error_message': 'Identifiants invalides.'
-                })
+                messages.error(request, 'Identifiants invalides.')
+                return render(request, 'index.html', {'form': form})
     else:
         form = LoginForm()
 
     return render(request, 'index.html', {'form': form})
 
 def forgot_password(request):
-    info_message = None
-    error_message = None
     if request.method == 'POST':
         email = request.POST.get('email')
         if not email:
-            error_message = "Veuillez entrer votre adresse email."
-        elif not User.objects.filter(email=email).exists():
-            error_message = "Aucun compte n'est associé à cette adresse email."
+            messages.error(request, "Veuillez entrer votre adresse email.")
         else:
-            # Ici, tu pourrais envoyer un email réel de réinitialisation
-            info_message = "Si un compte existe pour cette adresse, un lien de réinitialisation a été envoyé."
-    return render(request, 'forgot_password.html', {
-        'error_message': error_message,
-        'info_message': info_message
-    })
+            # Pour des raisons de sécurité, on affiche le même message que l'email existe ou non
+            messages.info(request, "Si un compte est associé à cet email, un lien de réinitialisation a été envoyé.")
+        return redirect('forgot_password')
+    return render(request, 'forgot_password.html')
 
 def logout(request):
     auth_logout(request)

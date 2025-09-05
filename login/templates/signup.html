@@ -4,7 +4,7 @@
 {% block content %}
 <div class="split-container">
   <div class="split-left">
-    <img src="{% static 'login/signup.png' %}" alt="Illustration inscription" class="split-illustration">
+    <img src="{% static 'signup.png' %}" alt="Illustration inscription" class="split-illustration">
     <h1 class="split-title">Plateforme Pédagogique</h1>
     <p class="split-subtitle">Créez votre compte pour accéder à toutes les ressources pédagogiques de la plateforme.</p>
   </div>
@@ -45,40 +45,48 @@
             <div class="alert alert-error">{{ profile_form.user_type.errors.0 }}</div>
           {% endif %}
         </div>
-        <div class="form-group" id="rollNumberSection" style="display: none;">
+        <div class="form-group hidden" id="rollNumberSection">
           <label for="id_roll_number">Numéro d'étudiant</label>
           <input type="text" name="roll_number" id="id_roll_number" class="form-control" placeholder="Numéro d'étudiant (si étudiant)" aria-label="Numéro d'étudiant" value="{{ profile_form.roll_number.value|default:'' }}">
           {% if profile_form.roll_number.errors %}
             <div class="alert alert-error">{{ profile_form.roll_number.errors.0 }}</div>
           {% endif %}
         </div>
-        {% if error_message %}
-          <div class="alert alert-error">{{ error_message }}</div>
-        {% endif %}
+        <div class="form-group hidden" id="niveauSection">
+          <label for="id_niveau">Niveau d'études</label>
+          <select name="niveau" id="id_niveau" class="form-control" aria-label="Niveau d'études">
+            <option value="">Sélectionnez votre niveau</option>
+            {% for value, label in profile_form.niveau.field.choices %}
+              {% if value %}
+                <option value="{{ value }}" {% if profile_form.niveau.value == value %}selected{% endif %}>{{ label }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+          {% if profile_form.niveau.errors %}
+            <div class="alert alert-error">{{ profile_form.niveau.errors.0 }}</div>
+          {% endif %}
+        </div>
+        <div class="form-group hidden" id="filiereSection">
+          <label for="id_filiere">Filière</label>
+          <select name="filiere" id="id_filiere" class="form-control" aria-label="Filière">
+            <option value="">Sélectionnez votre filière</option>
+            {% for value, label in profile_form.filiere.field.choices %}
+              {% if value %}
+                <option value="{{ value }}" {% if profile_form.filiere.value == value %}selected{% endif %}>{{ label }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+          {% if profile_form.filiere.errors %}
+            <div class="alert alert-error">{{ profile_form.filiere.errors.0 }}</div>
+          {% endif %}
+        </div>
         <button type="submit" class="btn btn-primary">S'inscrire</button>
-        <div class="text-center" style="margin-top:1rem;">
+        <div class="text-center mt-1">
           <a href="{% url 'login' %}" class="btn btn-secondary">Déjà un compte ? Se connecter ici</a>
         </div>
       </form>
     </div>
   </div>
 </div>
-<script>
-function toggleRollNumber() {
-  const radios = document.querySelectorAll('input[name="user_type"]');
-  const rollSection = document.getElementById('rollNumberSection');
-  let isStudent = false;
-  radios.forEach(radio => {
-    if (radio.checked && radio.value === 'student') {
-      isStudent = true;
-    }
-  });
-  rollSection.style.display = isStudent ? 'block' : 'none';
-}
-document.addEventListener('DOMContentLoaded', function() {
-  const radios = document.querySelectorAll('input[name="user_type"]');
-  radios.forEach(radio => radio.addEventListener('change', toggleRollNumber));
-  toggleRollNumber();
-});
-</script>
-{% endblock %} 
+<script src="{% static 'signup.js' %}"></script>
+{% endblock %}

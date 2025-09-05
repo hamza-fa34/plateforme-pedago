@@ -1,0 +1,80 @@
+{% load custom_filters %}
+
+<div class="resources-table-wrapper">
+  <table class="table-fullwidth">
+    <caption class="visually-hidden">{{ caption|default:"Liste des ressources" }}</caption>
+    <thead>
+      <tr>
+        <th scope="col">Titre</th>
+        <th scope="col">Matière</th>
+        <th scope="col">Niveau</th>
+        <th scope="col">Type</th>
+        <th scope="col">Nom du fichier</th>
+        <th scope="col">Type fichier</th>
+        {% if is_teacher_view %}
+          <th scope="col">Permission</th>
+        {% else %}
+          <th scope="col">Enseignant</th>
+        {% endif %}
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for file_data in files_data %}
+        <tr>
+          <td data-label="Titre">{{ file_data.title }}</td>
+          <td data-label="Matière">{{ file_data.subject }}</td>
+          <td data-label="Niveau">{{ file_data.level }}</td>
+          <td data-label="Type">{{ file_data.resource_type }}</td>
+          <td data-label="Nom du fichier"><i class="fas fa-file-alt"></i> {{ file_data.file.name|get_file_name }}</td>
+          <td data-label="Type fichier">
+            {% with ext=file_data.file.name|lower %}
+              {% if ext|slice:"-4:" == ".pdf" %}
+                <span class="badge badge-pdf">PDF</span>
+              {% elif ext|slice:"-4:" == ".doc" or ext|slice:"-5:" == ".docx" %}
+                <span class="badge badge-doc">DOC</span>
+              {% elif ext|slice:"-4:" == ".ppt" or ext|slice:"-5:" == ".pptx" %}
+                <span class="badge badge-ppt">PPT</span>
+              {% else %}
+                <span class="badge badge-other">AUTRE</span>
+              {% endif %}
+            {% endwith %}
+          </td>
+          {% if is_teacher_view %}
+            <td data-label="Permission">
+              {% if file_data.permission == 1 %}
+                <span class="badge badge-public">Public</span>
+              {% else %}
+                <span class="badge badge-private">Privé</span>
+              {% endif %}
+            </td>
+          {% else %}
+            <td data-label="Enseignant"><i class="fas fa-user-tie"></i> {{ file_data.owner.first_name|default:file_data.owner.username }}</td>
+          {% endif %}
+          <td data-label="Actions">
+            <div class="action-buttons">
+              <a href="{% url 'download_file' file_data.id %}" class="btn btn-sm btn-primary" title="Télécharger"><i class="fas fa-download"></i></a>
+              {% if is_teacher_view %}
+                <a href="{% url 'edit_resource' file_data.id %}" class="btn btn-sm btn-warning" title="Modifier"><i class="fas fa-edit"></i></a>
+                <form action="{% url 'delete_file' file_data.id %}" method="post" class="delete-form">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-danger" title="Supprimer" aria-label="Supprimer {{ file_data.file.name|get_file_name }}">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </form>
+              {% else %}
+                <button type="button" class="btn btn-sm btn-outline favorite-btn" title="Ajouter aux favoris" aria-label="Ajouter {{ file_data.file.name|get_file_name }} aux favoris" data-resource-id="{{ file_data.id }}">
+                  <i class="fas fa-heart{% if file_data.id in favorite_ids %} favorite{% endif %}"></i>
+                </button>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="8" class="text-center text-muted">Aucune ressource disponible.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

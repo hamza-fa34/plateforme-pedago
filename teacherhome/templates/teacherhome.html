@@ -1,14 +1,12 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load custom_filters %}
 {% block title %}Espace Enseignant – Plateforme Pédagogique{% endblock %}
 
 {% block content %}
 <div class="dashboard-container">
   <!-- En-tête de page -->
-  <header class="page-header">
-    <h1>Accueil Enseignant</h1>
-    <p class="welcome">Bonjour {{ user.first_name|default:user.username }}</p>
-  </header>
+  {% include 'partials/page_header.html' with title="Accueil Enseignant" welcome_user=user.first_name|default:user.username %}
 
   <div class="dashboard-main-content">
     <!-- Section Liste des ressources -->
@@ -16,85 +14,12 @@
       <header class="list-header">
         <h3><i class="fas fa-folder-open"></i> Mes ressources</h3>
       </header>
-      <div class="resources-table-wrapper">
-        <table class="table-fullwidth">
-          <caption class="visually-hidden">Liste des ressources pédagogiques de l'enseignant</caption>
-          <thead>
-            <tr>
-              <th scope="col">Titre</th>
-              <th scope="col">Matière</th>
-              <th scope="col">Niveau</th>
-              <th scope="col">Type</th>
-              <th scope="col">Nom du fichier</th>
-              <th scope="col">Type fichier</th>
-              <th scope="col">Permission</th>
-              <th scope="col">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for file_data in files_data %}
-              <tr>
-                <td data-label="Titre">{{ file_data.title }}</td>
-                <td data-label="Matière">{{ file_data.subject }}</td>
-                <td data-label="Niveau">{{ file_data.level }}</td>
-                <td data-label="Type">{{ file_data.resource_type }}</td>
-                <td data-label="Nom du fichier"><i class="fas fa-file-alt"></i> {{ file_data.file.name|get_file_name }}</td>
-                <td data-label="Type fichier">
-                  {% with ext=file_data.file.name|lower %}
-                    {% if ext|slice:"-4:" == ".pdf" %}
-                      <span class="badge badge-pdf">PDF</span>
-                    {% elif ext|slice:"-4:" == ".doc" or ext|slice:"-5:" == ".docx" %}
-                      <span class="badge badge-doc">DOC</span>
-                    {% elif ext|slice:"-4:" == ".ppt" or ext|slice:"-5:" == ".pptx" %}
-                      <span class="badge badge-ppt">PPT</span>
-                    {% else %}
-                      <span class="badge badge-other">AUTRE</span>
-                    {% endif %}
-                  {% endwith %}
-                </td>
-                <td data-label="Permission">
-                  {% if file_data.permission == 1 %}
-                    <span class="badge badge-public">Public</span>
-                  {% else %}
-                    <span class="badge badge-private">Privé</span>
-                  {% endif %}
-                </td>
-                <td data-label="Actions">
-                  <div class="action-buttons">
-                    <a href="{% url 'download_file' file_data.id %}"
-                       class="btn btn-sm btn-primary"
-                       title="Télécharger"><i class="fas fa-download"></i></a>
-                    <a href="{% url 'edit_resource' file_data.id %}"
-                       class="btn btn-sm btn-warning"
-                       title="Modifier"><i class="fas fa-edit"></i></a>
-                    <form action="{% url 'delete_file' file_data.id %}"
-                          method="post"
-                          class="delete-form"
-                          onsubmit="return confirm('Supprimer cette ressource ?')">
-                      {% csrf_token %}
-                      <button type="submit"
-                              class="btn btn-sm btn-danger"
-                              title="Supprimer"
-                              aria-label="Supprimer {{ file_data.file.name|get_file_name }}">
-                        <i class="fas fa-trash"></i>
-                      </button>
-                    </form>
-                  </div>
-                </td>
-              </tr>
-            {% empty %}
-              <tr>
-                <td colspan="8" class="text-center text-muted">Aucune ressource disponible.</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
+            {% include 'partials/resource_table.html' with files_data=files_data is_teacher_view=True caption="Liste de mes ressources" %}
     </section>
 
     <!-- Section Upload -->
-    <aside class="upload-box">
-      <h2 class="upload-title"><i class="fas fa-upload"></i> Ajouter une ressource</h2>
+    <aside class="form-card-container">
+      <h2><i class="fas fa-upload"></i> Ajouter une ressource</h2>
       <form method="post"
             action="{% url 'upload_form' %}"
             enctype="multipart/form-data"
@@ -161,4 +86,8 @@
     </aside>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_body %}
+<script src="{% static 'teacherhome/teacherhome.js' %}"></script>
 {% endblock %}

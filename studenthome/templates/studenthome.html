@@ -1,222 +1,38 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load custom_filters %}
 {% block title %}Espace Étudiant – Plateforme Pédagogique{% endblock %}
-
-{% block extra_head %}
-<style>
-.fa-heart.favorite, .fas.fa-heart.favorite, .fa.fa-heart.favorite, .fa-solid.fa-heart.favorite {
-  color: #e53935 !important;
-  filter: none !important;
-  opacity: 1 !important;
-  transition: color 0.2s;
-}
-</style>
-{% endblock %}
 
 {% block content %}
 <div class="dashboard-container">
   <!-- En-tête de page -->
-  <header class="page-header">
-    <h1>Accueil Étudiant</h1>
-    <p class="welcome" style="font-size:1.2rem; font-weight:500; margin-top:0.5rem; display:flex; align-items:center; gap:0.5rem;">
-      <i class="fas fa-user-circle" style="font-size:1.5rem; color:#1a237e;"></i>
-      Bonjour
-      <span style="color:#1a237e; font-weight:700;">
-        {% if user.first_name and user.last_name %}
-          {{ user.first_name }} {{ user.last_name }}
-        {% elif user.first_name %}
-          {{ user.first_name }}
-        {% else %}
-          {{ user.username }}
-        {% endif %}
-      </span>
-    </p>
-  </header>
-
-  <!-- Section Recherche simplifiée -->
-  <section class="search-section" style="display:flex; justify-content:center; align-items:center; margin:2rem 0;">
-    <form method="get" action="" class="form search-form" style="display:flex; gap:0.5rem;">
-      <input id="search-input"
-             type="text"
-             name="search"
-             class="form-control"
-             placeholder="Rechercher une ressource…"
-             value="{{ search_query }}"
-             style="min-width:250px;">
-      <button type="submit" class="btn btn-primary">Rechercher</button>
-    </form>
-  </section>
-
-  <!-- Section Liste des ressources -->
-  <section class="resources-table-section">
-    <header class="list-header">
-      <h3><i class="fas fa-book"></i> Ressources disponibles</h3>
-    </header>
-    <div class="resources-table-wrapper">
-      <table class="table-fullwidth">
-        <thead>
-          <tr>
-            <th scope="col">Titre</th>
-            <th scope="col">Matière</th>
-            <th scope="col">Niveau</th>
-            <th scope="col">Type</th>
-            <th scope="col">Nom du fichier</th>
-            <th scope="col">Type</th>
-            <th scope="col">Enseignant</th>
-            <th scope="col">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for file_data in files_data %}
-            <tr>
-              <td data-label="Titre">{{ file_data.title }}</td>
-              <td data-label="Matière">{{ file_data.subject }}</td>
-              <td data-label="Niveau">{{ file_data.level }}</td>
-              <td data-label="Type">{{ file_data.resource_type }}</td>
-              <td data-label="Nom du fichier"><i class="fas fa-file-alt"></i> {{ file_data.file.name|get_file_name }}</td>
-              <td data-label="Type">
-                {% with ext=file_data.file.name|lower %}
-                  {% if ext|slice:"-4:" == ".pdf" %}
-                    <span class="badge badge-pdf">PDF</span>
-                  {% elif ext|slice:"-4:" == ".doc" or ext|slice:"-5:" == ".docx" %}
-                    <span class="badge badge-doc">DOC</span>
-                  {% elif ext|slice:"-4:" == ".ppt" or ext|slice:"-5:" == ".pptx" %}
-                    <span class="badge badge-ppt">PPT</span>
-                  {% else %}
-                    <span class="badge badge-other">AUTRE</span>
-                  {% endif %}
-                {% endwith %}
-              </td>
-              <td data-label="Enseignant"><i class="fas fa-user-tie"></i> {{ file_data.owner.first_name|default:file_data.owner.username }}</td>
-              <td data-label="Actions">
-                <div class="action-buttons">
-                  <a href="{% url 'download_file' file_data.id %}"
-                     class="btn btn-sm btn-primary"
-                     title="Télécharger"><i class="fas fa-download"></i></a>
-                  <button type="button"
-                          class="btn btn-sm btn-outline favorite-btn"
-                          title="Ajouter aux favoris"
-                          aria-label="Ajouter {{ file_data.file.name|get_file_name }} aux favoris"
-                          data-resource-id="{{ file_data.id }}">
-                    <i class="fas fa-heart{% if file_data.id in favorite_ids %} favorite{% endif %}"{% if file_data.id in favorite_ids %} style="color:#e53935 !important;"{% endif %}></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          {% empty %}
-            <tr>
-              <td colspan="8" class="text-center text-muted">Aucune ressource disponible.</td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </section>
+  {% include 'partials/page_header.html' with title="Mes Recommandations" subtitle="Découvrez les ressources personnalisées sélectionnées pour vous" welcome_user=user.first_name|default:user.username %}
 
   <!-- Section Recommandations personnalisées -->
-  <section class="recommendations-section">
-    <header><h2><i class="fas fa-magic"></i> Recommandations pour vous</h2></header>
+  <section class="recommendations-section" aria-labelledby="recommendations-heading">
+    <header class="list-header">
+      <h2 id="recommendations-heading"><i class="fas fa-magic"></i> Spécialement pour vous</h2>
+    </header>
     {% if recommendations %}
-      <ul class="recommendations-list">
-        {% for reco in recommendations %}
-          <li>
-            <i class="fas fa-file-alt"></i> {{ reco.file.name|get_file_name }}
-            <span class="badge badge-other">{{ reco.owner.first_name|default:reco.owner.username }}</span>
-            {% if reco.title %}<span class="badge badge-info">Titre : {{ reco.title }}</span>{% endif %}
-            {% if reco.subject %}<span class="badge badge-info">Matière : {{ reco.subject }}</span>{% endif %}
-            {% if reco.level %}<span class="badge badge-info">Niveau : {{ reco.level }}</span>{% endif %}
-            {% if reco.resource_type %}<span class="badge badge-info">Type : {{ reco.resource_type }}</span>{% endif %}
-            {% if reco.keywords %}
-              <span class="badge badge-pdf">Mots-clés : {{ reco.keywords|join:", " }}</span>
-            {% endif %}
-            <a href="{% url 'download_file' reco.id %}" class="btn btn-sm btn-primary">Télécharger</a>
-          </li>
-        {% endfor %}
-      </ul>
+      {% include 'partials/resource_table.html' with files_data=recommendations is_teacher_view=False caption="Vos recommandations personnalisées" %}
     {% else %}
-      <p>Aucune recommandation personnalisée pour le moment.</p>
+      <div class="text-center empty-state">
+        <i class="fas fa-seedling fa-3x text-muted mb-3" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+        <h3 class="text-muted">Vos recommandations apparaîtront ici.</h3>
+        <p class="text-muted">Consultez quelques documents pour nous aider à comprendre ce qui vous intéresse.</p>
+        <a href="{% url 'resource_list' %}" class="btn btn-primary mt-3">Explorer les ressources</a>
+      </div>
     {% endif %}
   </section>
 </div>
 
 {% endblock %}
 
+{% block body_data %}
+  data-toggle-favorite-url="{% url 'toggle_favorite' %}"
+  data-csrf-token="{{ csrf_token }}"
+{% endblock %}
+
 {% block extra_body %}
-<script>
-  console.log('=== DEBUG FAVORIS ===');
-  console.log('CSRF Token:', '{{ csrf_token }}');
-  console.log('URL toggle_favorite:', '{% url "toggle_favorite" %}');
-  
-  document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM chargé');
-    
-    const favoriteButtons = document.querySelectorAll('.favorite-btn');
-    console.log('Nombre de boutons favoris trouvés:', favoriteButtons.length);
-    
-    favoriteButtons.forEach((btn, index) => {
-      console.log(`Bouton ${index}:`, btn);
-      console.log(`  - Resource ID:`, btn.dataset.resourceId);
-      console.log(`  - Icon:`, btn.querySelector('i'));
-      
-      btn.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        console.log('=== CLIC SUR FAVORI ===');
-        console.log('Resource ID:', this.dataset.resourceId);
-        console.log('Bouton cliqué:', this);
-        
-        const resourceId = this.dataset.resourceId;
-        const csrfToken = '{{ csrf_token }}';
-        
-        // Créer les données de la requête
-        const formData = new URLSearchParams();
-        formData.append('resource_id', resourceId);
-        
-        console.log('Données envoyées:', formData.toString());
-        
-        fetch('{% url "toggle_favorite" %}', {
-          method: 'POST',
-          headers: {
-            'X-CSRFToken': csrfToken,
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: formData
-        })
-        .then(res => {
-          console.log('Réponse HTTP:', res.status, res.statusText);
-          if (!res.ok) {
-            throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-          }
-          return res.json();
-        })
-        .then(data => {
-          console.log('Données reçues:', data);
-          if (data.success) {
-            const icon = this.querySelector('i');
-            console.log('Icône trouvée:', icon);
-            console.log('Classes avant:', icon.className);
-            
-            if (data.favorited) {
-              icon.classList.add('favorite');
-              icon.style.color = '#e53935';
-              console.log('✅ Favori ajouté - cœur rouge');
-              console.log('Classes après:', icon.className);
-            } else {
-              icon.classList.remove('favorite');
-              icon.style.color = '';
-              console.log('❌ Favori retiré - cœur normal');
-              console.log('Classes après:', icon.className);
-            }
-          } else {
-            console.error('❌ Erreur:', data.error);
-          }
-        })
-        .catch(error => {
-          console.error('❌ Erreur AJAX:', error);
-        });
-      });
-    });
-  });
-</script>
+  <script src="{% static 'studenthome/favorites.js' %}"></script>
 {% endblock %}

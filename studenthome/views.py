@@ -10,6 +10,7 @@ from django.http import HttpResponse, JsonResponse
 from .models import Favorite, Notification
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
+from django.core.paginator import Paginator
 
 def get_recommendations_for_user(user, max_results=5):
     from teacherhome.models import Resource, ResourceView
@@ -81,33 +82,6 @@ def studentHome(request):
     except UserProfile.DoesNotExist:
         return redirect('no_access')
 
-    search_query = request.GET.get('search', '')
-
-    # Start with all public resources
-    resources = Resource.objects.filter(permission=1)
-
-    if search_query:
-        # Recherche avancée : titre, matière, niveau, type, nom du fichier, mots-clés, enseignant
-        resources = resources.filter(
-            Q(title__icontains=search_query) |
-            Q(subject__icontains=search_query) |
-            Q(level__icontains=search_query) |
-            Q(resource_type__icontains=search_query) |
-            Q(file__icontains=search_query) |
-            Q(keywords__icontains=search_query) |
-            Q(owner__username__icontains=search_query)
-        ).distinct()
-
-    # --- Trending Resources Logic ---
-    seven_days_ago = timezone.now() - timedelta(days=7)
-    trending_resources = Resource.objects.filter(
-        views__timestamp__gte=seven_days_ago,
-        permission=1
-    ).annotate(
-        view_count=Count('views')
-    ).order_by('-view_count')[:5] # Top 5 trending
-
-    favorite_ids = list(Favorite.objects.filter(user=request.user).values_list('resource_id', flat=True))
     recommendations = get_recommendations_for_user(request.user)
     # Notifier l'utilisateur s'il y a de nouvelles recommandations
     if recommendations:
@@ -118,13 +92,45 @@ def studentHome(request):
 
     context = {
         'profile': profile,
-        'files_data': resources,
-        'trending_resources': trending_resources, # Add to context
-        'search_query': search_query,
-        'favorite_ids': favorite_ids,
         'recommendations': recommendations,
     }
     return render(request, 'studenthome.html', context)
+
+@login_required
+def resource_list(request):
+    try:
+        profile = UserProfile.objects.get(user=request.user)
+        if not profile or profile.user_type != 'student':
+            return redirect('no_access')
+    except UserProfile.DoesNotExist:
+        return redirect('no_access')
+
+    search_query = request.GET.get('search', '')
+    resources_list = Resource.objects.filter(permission=1).order_by('-id')
+
+    if search_query:
+        resources_list = resources_list.filter(
+            Q(title__icontains=search_query) |
+            Q(subject__icontains=search_query) |
+            Q(level__icontains=search_query) |
+            Q(resource_type__icontains=search_query) |
+            Q(file__icontains=search_query) |
+            Q(keywords__icontains=search_query) |
+            Q(owner__username__icontains=search_query)
+        ).distinct()
+
+    paginator = Paginator(resources_list, 15)  # 15 ressources par page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    favorite_ids = list(Favorite.objects.filter(user=request.user).values_list('resource_id', flat=True))
+
+    context = {
+        'files_data': page_obj, # Note: le template partial utilise 'files_data'
+        'search_query': search_query,
+        'favorite_ids': favorite_ids,
+    }
+    return render(request, 'studenthome/resource_list.html', context)
 
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404

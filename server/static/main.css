@@ -40,6 +40,7 @@ html, body {
   top: 0;
   z-index: 1000;
 }
+
 .header-flex {
   display: flex;
   align-items: center;
@@ -48,6 +49,45 @@ html, body {
   margin: 0 auto;
   padding: 0 2rem;
   height: 70px;
+}
+
+.header-main-content {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.notification-link {
+  position: relative;
+  color: #fff !important;
+  font-size: 1.3rem;
+  text-decoration: none;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.notification-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff !important;
+}
+
+.notification-link i {
+  display: inline-block;
+  color: #fff;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -10px;
+  background-color: var(--color-error);
+  color: white;
+  border-radius: 50%;
+  padding: 0.15rem 0.4rem;
+  font-size: 0.7rem;
+  font-weight: bold;
+  border: 2px solid var(--color-primary);
 }
 .header-brand {
   display: flex;
@@ -385,10 +425,15 @@ html, body {
   }
   
   .guest-menu .btn-primary,
-  .guest-menu .btn-secondary {
-    padding: 0.6rem 1rem;
-    font-size: 0.8rem;
+  .guest-menu .action-buttons .btn-sm {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.9rem;
   }
+}
+
+.favorite-btn .fa-heart.favorite {
+    color: #e53935; /* Rouge pour les favoris */
+    font-weight: bold;
 }
 
 .main-content {
@@ -749,6 +794,10 @@ input:focus, select:focus, textarea:focus {
   border-radius: 4px;
 }
 
+.notification-link {
+  position: relative;
+}
+
 @media (max-width: 700px) {
   .main-content {
     padding: 1.2rem 0.5rem;
@@ -783,6 +832,174 @@ input:focus, select:focus, textarea:focus {
   }
 }
 
+/* Conteneur pour les messages Django */
+.messages-container {
+  padding: 0 2rem;
+  max-width: 1400px;
+  margin: 1.5rem auto 0 auto;
+}
+
+/* ====================================
+   DASHBOARD ÉTUDIANT & ENSEIGNANT
+   ==================================== */
+
+.dashboard-main-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+}
+
+.form-card-container {
+  background-color: var(--color-surface);
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 16px rgba(25,118,210,0.08);
+}
+
+@media (max-width: 1024px) {
+  .dashboard-main-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+.welcome-message {
+  font-size: 1.1rem;
+  color: var(--color-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.welcome-message__icon {
+  font-size: 1.3rem;
+}
+
+.welcome-message__name {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.page-subtitle {
+  font-size: 1rem;
+  color: var(--color-muted);
+  margin-top: 0.5rem;
+}
+
+.dashboard-container {
+  max-width: 1400px;
+  margin: 2rem auto;
+  padding: 0 2rem;
+}
+
+.page-header {
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 2.5rem;
+}
+
+.dashboard-container > section {
+  margin-bottom: 3rem;
+}
+
+.dashboard-container > section:last-child {
+  margin-bottom: 0;
+}
+
+/* Barre de recherche centrée (page étudiant) */
+.search-section--centered {
+  text-align: center;
+}
+
+.search-form--inline {
+  max-width: 700px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+}
+
+.search-form--inline .form-control {
+  flex-grow: 1;
+}
+
+/* Section des recommandations */
+.recommendations-section header h2 {
+  margin-bottom: 1.5rem;
+}
+
+.recommendations-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.recommendation-item {
+  background-color: var(--color-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.recommendation-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.recommendation-item__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.recommendation-item__header .fa-file-alt {
+  color: var(--color-primary);
+  font-size: 1.2rem;
+}
+
+.recommendation-item__title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--color-text);
+}
+
+.recommendation-item__meta {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.recommendation-item__footer {
+  margin-top: auto; /* Pousse le pied de page vers le bas */
+  text-align: right;
+}
+
+/* Améliorations responsives pour les formulaires et tableaux */
+@media (max-width: 768px) {
+  .search-form {
+    flex-direction: column; /* Empile les éléments verticalement */
+    align-items: stretch; /* Étire les éléments pour occuper toute la largeur */
+  }
+
+  .search-form input[type="text"] {
+    min-width: 0; /* Annule la largeur minimale */
+  }
+
+  .action-buttons {
+    flex-direction: row; /* Aligne les boutons horizontalement */
+    flex-wrap: wrap; /* Permet le passage à la ligne */
+    justify-content: flex-start; /* Aligne au début */
+    gap: 0.5rem;
+  }
+}
+
 .text-center {
   text-align: center;
 }
@@ -810,6 +1027,15 @@ input:focus, select:focus, textarea:focus {
 .text-decoration-none {
   text-decoration: none;
 }
+
+.hidden {
+  display: none !important; /* Utilisation de !important pour s'assurer qu'elle surcharge d'autres styles d'affichage si nécessaire */
+}
+
+.mt-1 {
+    margin-top: 1rem;
+}
+
 .flex-row-between {
   display: flex;
   justify-content: space-between;
@@ -1213,6 +1439,7 @@ input:focus, select:focus, textarea:focus {
   z-index: 1202;
   transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
   outline: none;
+  background: var(--color-primary, #1a237e);
 }
 .mobile-menu.open {
   right: 0;
@@ -1387,6 +1614,47 @@ input:focus, select:focus, textarea:focus {
   flex: 1;
 }
 
+/* Styles pour la page étudiant */
+.welcome-message {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.welcome-message__icon {
+  font-size: 1.5rem;
+  color: var(--color-primary);
+}
+
+.welcome-message__name {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.search-section--centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem 0;
+}
+
+.search-form--inline {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.search-form--inline input {
+    min-width: 250px;
+}
+
+.favorite-btn .fa-heart.favorite {
+  color: #e53935 !important; /* Maintenir pour surcharger les styles existants si nécessaire */
+  opacity: 1 !important;
+}
+
 /* Table des ressources */
 .resources-table {
   overflow-x: auto;
@@ -1496,8 +1764,9 @@ input:focus, select:focus, textarea:focus {
 /* Boutons d'action */
 .action-buttons {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .btn-sm {

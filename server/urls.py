@@ -27,7 +27,7 @@ handler404 = not_found_404
 handler403 = csrf_failure
 
 urlpatterns = [
-    path('', login_views.login, name='home'),  # Route racine vers la page de connexion
+    path('', login_views.login_view, name='home'),  # Route racine vers la page de connexion
     path('logout/', login_views.logout, name='logout'),  # Route logout globale
     path('admin/', admin.site.urls),
     path('', include('login.urls')),

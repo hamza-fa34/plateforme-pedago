@@ -1,47 +1,56 @@
 {% load static %}
 {% load user_tags %}
 
-<header class="main-header" role="banner" style="background: var(--color-primary, #1a237e); color: #fff;">
+<header class="main-header" role="banner">
   <div class="container header-flex">
-    <a href="{% if user.is_authenticated %}{% if user|is_student %}{% url 'studenthome' %}{% else %}{% url 'teacher_home' %}{% endif %}{% else %}/{% endif %}" class="header-brand" style="color: #fff;">
-  <img src="{% static 'staticfiles/logo.png' %}" alt="Logo" class="logo-img">
+    <a href="{% if user.is_authenticated %}{% if user|is_student %}{% url 'studenthome' %}{% else %}{% url 'teacher_home' %}{% endif %}{% else %}/{% endif %}" class="header-brand">
+  <img src="{% static 'logo.png' %}" alt="Logo" class="logo-img">
       <span class="logo-text">Plateforme Pédagogique</span>
     </a>
 
     {% if user.is_authenticated %}
-      <!-- Desktop Navigation -->
-      <nav class="nav desktop-nav" role="navigation" aria-label="Navigation principale">
-        <ul class="nav-list">
-          <li><a href="{% if user|is_student %}{% url 'studenthome' %}{% else %}{% url 'teacher_home' %}{% endif %}"
-                 class="nav-link btn btn-logout btn-rounded">Mon Espace</a></li>
-          <li><a href="{% url 'logout' %}" class="nav-link btn btn-logout" style="color: #fff;">Déconnexion</a></li>
-        </ul>
-      </nav>
+      <div class="header-main-content">
+        <!-- Desktop Navigation -->
+        <nav class="nav desktop-nav" role="navigation" aria-label="Navigation principale">
+          <ul class="nav-list">
+            {% if user|is_student %}
+              <li><a href="{% url 'resource_list' %}" class="nav-link btn btn-logout btn-rounded">Ressources</a></li>
+            {% else %}
+              <li><a href="{% url 'teacher_home' %}" class="nav-link btn btn-logout btn-rounded">Mon Espace</a></li>
+            {% endif %}
+            <li><a href="{% url 'logout' %}" class="nav-link btn btn-logout">Déconnexion</a></li>
+          </ul>
+        </nav>
 
-      {% if user.is_authenticated and user|is_student or user.is_authenticated and user|is_teacher %}
-        <a href="{% url 'notifications_list' %}" class="nav-link notification-link" style="position:relative; color:#fff;">
-          <i class="fas fa-bell"></i>
-          {% if notifications_unread > 0 %}
-            <span class="notification-badge">{{ notifications_unread }}</span>
-          {% endif %}
-        </a>
-      {% endif %}
+        {% if user|is_student or user|is_teacher %}
+          <a href="{% url 'notifications_list' %}" class="nav-link notification-link" aria-label="Notifications">
+            <i class="fas fa-bell"></i>
+            {% if notifications_unread > 0 %}
+              <span class="notification-badge">{{ notifications_unread }}</span>
+            {% endif %}
+          </a>
+        {% endif %}
+      </div>
 
       <!-- Mobile Navigation Toggle -->
-      <button class="burger-menu" aria-label="Ouvrir le menu" aria-controls="mobileMenu" aria-expanded="false" type="button" style="color: #fff;">
+      <button class="burger-menu" aria-label="Ouvrir le menu" aria-controls="mobileMenu" aria-expanded="false" type="button">
         <span class="burger-bar"></span>
         <span class="burger-bar"></span>
         <span class="burger-bar"></span>
       </button>
 
       <!-- Mobile Menu -->
-      <aside id="mobileMenu" class="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu mobile" style="background: var(--color-primary, #1a237e); color: #fff;">
-        <button class="close-menu" aria-label="Fermer le menu" type="button" style="color: #fff;">&times;</button>
+      <aside id="mobileMenu" class="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu mobile">
+        <button class="close-menu" aria-label="Fermer le menu" type="button">&times;</button>
         <nav class="nav mobile-nav" role="navigation" aria-label="Navigation mobile">
           <ul class="nav-list">
-            <li><a href="{% if user|is_student %}{% url 'studenthome' %}{% else %}{% url 'teacher_home' %}{% endif %}"
-                   class="nav-link btn btn-logout btn-rounded">Mon Espace</a></li>
-            <li><a href="{% url 'logout' %}" class="nav-link btn btn-logout" style="color: #fff;">Déconnexion</a></li>
+            {% if user|is_student %}
+              <li><a href="{% url 'studenthome' %}" class="nav-link btn btn-logout btn-rounded">Accueil</a></li>
+              <li><a href="{% url 'resource_list' %}" class="nav-link btn btn-logout btn-rounded">Ressources</a></li>
+            {% else %}
+              <li><a href="{% url 'teacher_home' %}" class="nav-link btn btn-logout btn-rounded">Mon Espace</a></li>
+            {% endif %}
+            <li><a href="{% url 'logout' %}" class="nav-link btn btn-logout">Déconnexion</a></li>
           </ul>
         </nav>
       </aside>
@@ -50,8 +59,8 @@
     {% else %}
       <nav class="nav desktop-nav" role="navigation" aria-label="Navigation principale">
         <ul class="nav-list">
-          <li><a href="{% url 'login' %}" class="nav-link btn btn-secondary btn-rounded" style="color: #fff;">Connexion</a></li>
-          <li><a href="{% url 'signup' %}" class="nav-link btn btn-secondary btn-rounded" style="color: #fff;">Inscription</a></li>
+          <li><a href="{% url 'login' %}" class="nav-link btn btn-secondary btn-rounded">Connexion</a></li>
+          <li><a href="{% url 'signup' %}" class="nav-link btn btn-secondary btn-rounded">Inscription</a></li>
         </ul>
       </nav>
     {% endif %}

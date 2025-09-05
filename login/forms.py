@@ -68,7 +68,25 @@ class UserProfileForm(forms.ModelForm):
             'aria-label': "Numéro d'étudiant"
         })
     )
+    niveau = forms.ChoiceField(
+        choices=[('', 'Sélectionnez votre niveau')] + list(UserProfile.NIVEAU_CHOICES),
+        required=False,
+        label="Niveau d'études",
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+            'aria-label': "Niveau d'études"
+        })
+    )
+    filiere = forms.ChoiceField(
+        choices=[('', 'Sélectionnez votre filière')] + list(UserProfile.FILIERE_CHOICES),
+        required=False,
+        label="Filière",
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+            'aria-label': "Filière"
+        })
+    )
 
     class Meta:
         model = UserProfile
-        fields = ['user_type', 'roll_number']
+        fields = ['user_type', 'roll_number', 'niveau', 'filiere']

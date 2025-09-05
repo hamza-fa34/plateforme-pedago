@@ -5,7 +5,7 @@
 {% block content %}
 <div class="split-container">
   <div class="split-left">
-    <img src="{% static 'login/login.png' %}" alt="Illustration connexion" class="split-illustration">
+<img src="{% static 'login.png' %}" alt="Illustration connexion" class="split-illustration">
     <h1 class="split-title">Plateforme Pédagogique</h1>
     <p class="split-subtitle">Votre portail institutionnel pour accéder, déposer et rechercher des ressources pédagogiques.</p>
   </div>
@@ -14,10 +14,20 @@
       <h2>Connexion</h2>
       <form class="form" action="{% url 'login' %}" method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        {% if error_message %}
-          <div class="alert alert-error">{{ error_message }}</div>
-        {% endif %}
+        <div class="form-group">
+          <label for="{{ form.username.id_for_label }}">Nom d'utilisateur ou Email</label>
+          {{ form.username }}
+          {% if form.username.errors %}
+            <div class="alert alert-error">{{ form.username.errors.0 }}</div>
+          {% endif %}
+        </div>
+        <div class="form-group">
+          <label for="{{ form.password.id_for_label }}">Mot de passe</label>
+          {{ form.password }}
+          {% if form.password.errors %}
+            <div class="alert alert-error">{{ form.password.errors.0 }}</div>
+          {% endif %}
+        </div>
         <div class="flex-row-between">
           <a href="{% url 'forgot_password' %}" class="btn btn-secondary">Mot de passe oublié ?</a>
           <a href="{% url 'signup' %}" class="btn btn-secondary">S'inscrire</a>
