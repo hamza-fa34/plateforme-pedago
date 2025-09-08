@@ -6,7 +6,7 @@
 {% block content %}
 <div class="dashboard-container">
   <!-- En-tête de page -->
-  {% include 'partials/page_header.html' with title="Mes Recommandations" subtitle="Découvrez les ressources personnalisées sélectionnées pour vous" welcome_user=user.first_name|default:user.username %}
+  {% include 'partials/page_header.html' with title="Mes Recommandations" welcome_user=user.first_name|default:user.username %}
 
   <!-- Section Recommandations personnalisées -->
   <section class="recommendations-section" aria-labelledby="recommendations-heading">
@@ -14,7 +14,7 @@
       <h2 id="recommendations-heading"><i class="fas fa-magic"></i> Spécialement pour vous</h2>
     </header>
     {% if recommendations %}
-      {% include 'partials/resource_table.html' with files_data=recommendations is_teacher_view=False caption="Vos recommandations personnalisées" %}
+      {% include 'partials/resource_table.html' with files_data=recommendations is_teacher_view=False %}
     {% else %}
       <div class="text-center empty-state">
         <i class="fas fa-seedling fa-3x text-muted mb-3" style="font-size: 3rem; margin-bottom: 1rem;"></i>

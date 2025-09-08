@@ -1,12 +1,28 @@
 {% extends 'base.html' %}
-{% block title %}Erreur de sécurité{% endblock %}
+{% load static %}
+
+{% block title %}Erreur de sécurité - Plateforme Pédagogique{% endblock %}
 {% block content %}
-<main class="main-content text-center">
-  <h1>Erreur de sécurité</h1>
-  <div class="alert alert-error">
-    Une erreur CSRF est survenue. Veuillez réessayer ou contacter le support.<br>
-    <small>{{ reason }}</small>
+<div class="error-page-container">
+  <div class="error-content">
+    <div class="error-illustration">
+      <i class="fas fa-shield-alt error-icon" style="font-size: 4rem; color: var(--danger-color);"></i>
+    </div>
+    <div class="error-text">
+      <h1 class="error-title">Erreur de sécurité</h1>
+      <p class="error-description">
+        Une erreur CSRF est survenue. Cette protection empêche les attaques malveillantes.
+        <br><small class="text-muted">{{ reason }}</small>
+      </p>
+      <div class="error-actions">
+        <a href="/" class="btn btn-primary">
+          <i class="fas fa-home"></i> Retour à l'accueil
+        </a>
+        <a href="javascript:history.back()" class="btn btn-secondary">
+          <i class="fas fa-arrow-left"></i> Page précédente
+        </a>
+      </div>
+    </div>
   </div>
-  <a href="/" class="btn btn-primary">Retour à l'accueil</a>
-</main>
-{% endblock %} 
+</div>
+{% endblock %}

@@ -6,48 +6,58 @@
 {% block content %}
 <div class="dashboard-container">
   <!-- En-tête de page -->
-  {% include 'partials/page_header.html' with title="Toutes les Ressources" subtitle="Explorez et recherchez parmi toutes les ressources disponibles" %}
+  {% include 'partials/page_header.html' with title="Toutes les Ressources" %}
 
   <!-- Section Recherche -->
   <section class="search-section--centered">
     <form method="get" action="{% url 'resource_list' %}" class="form search-form--inline">
-      <label for="search-input" class="visually-hidden">Rechercher une ressource…</label>
-      <input id="search-input"
-             type="text"
-             name="search"
-             class="form-control"
-             placeholder="Rechercher par mot-clé, matière, niveau…"
-             value="{{ search_query }}">
-      <button type="submit" class="btn btn-primary" aria-label="Rechercher">
-        <i class="fas fa-search"></i>
-      </button>
+      <div class="input-group">
+        <input id="search-input"
+               type="text"
+               name="search"
+               class="form-control"
+               placeholder="Rechercher par mot-clé, matière, niveau…"
+               value="{{ search_query }}"
+               aria-label="Rechercher des ressources">
+        <div class="input-group-append">
+          <button type="submit" class="btn btn-primary" aria-label="Lancer la recherche">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </div>
     </form>
   </section>
 
   <!-- Section Liste des ressources -->
   <section class="resources-table-section">
-    {% include 'partials/resource_table.html' with files_data=files_data favorite_ids=favorite_ids is_teacher_view=False caption="Liste des ressources disponibles" %}
+    {% include 'partials/resource_table.html' with files_data=files_data favorite_ids=favorite_ids is_teacher_view=False %}
   </section>
 
   <!-- Pagination -->
   {% if files_data.has_other_pages %}
-    <nav aria-label="Pagination des ressources" class="pagination-container">
-      <ul class="pagination">
+    <nav aria-label="Pagination des ressources" class="pagination-container mt-4">
+      <ul class="pagination justify-content-center flex-wrap">
         {% if files_data.has_previous %}
           <li class="page-item">
-            <a class="page-link" href="?page={{ files_data.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="Précédent">
+            <a class="page-link" href="?page={{ files_data.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="Page précédente">
               <span aria-hidden="true">&laquo;</span>
+              <span class="sr-only">Précédent</span>
             </a>
           </li>
         {% else %}
           <li class="page-item disabled">
-            <span class="page-link">&laquo;</span>
+            <span class="page-link" aria-hidden="true">&laquo;</span>
           </li>
         {% endif %}
 
         {% for i in files_data.paginator.page_range %}
           {% if files_data.number == i %}
-            <li class="page-item active" aria-current="page"><span class="page-link">{{ i }}</span></li>
+            <li class="page-item active" aria-current="page">
+              <span class="page-link">
+                {{ i }}
+                <span class="sr-only">(actuelle)</span>
+              </span>
+            </li>
           {% else %}
             <li class="page-item"><a class="page-link" href="?page={{ i }}{% if search_query %}&search={{ search_query }}{% endif %}">{{ i }}</a></li>
           {% endif %}

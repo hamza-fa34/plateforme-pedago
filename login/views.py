@@ -3,25 +3,31 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from django.contrib import messages
 from django.contrib.auth.models import User
 from .models import UserProfile
-from .forms import UserForm, UserProfileForm, LoginForm
+from .forms import UserForm, ProfileUpdateForm, LoginForm, UserRegisterForm
 
 def signup(request):
     if request.method == 'POST':
-        user_form = UserForm(request.POST)
-        profile_form = UserProfileForm(request.POST)
-        if user_form.is_valid() and profile_form.is_valid():
-            user = user_form.save(commit=False)
-            user.username = user_form.cleaned_data['email']
-            user.set_password(user_form.cleaned_data['password'])
-            user.save()
-
-            profile = profile_form.save(commit=False)
-            profile.user = user
-            profile.name = user_form.cleaned_data['first_name']
-            if profile_form.cleaned_data['user_type'] == 'student':
-                profile.roll_number = profile_form.cleaned_data['roll_number']
-                profile.niveau = profile_form.cleaned_data.get('niveau', '')
-                profile.filiere = profile_form.cleaned_data.get('filiere', '')
+        form = UserRegisterForm(request.POST)
+        if form.is_valid():
+            # Sauvegarder l'utilisateur et créer le profil
+            user = form.save(commit=True)
+            
+            # Le profil est créé automatiquement par le formulaire UserRegisterForm
+            # avec les champs de base, on peut ajouter des champs supplémentaires si nécessaire
+            profile = user.userprofile
+            
+            # Mettre à jour les champs spécifiques au type d'utilisateur
+            profile.user_type = form.cleaned_data['user_type']
+            
+            if form.cleaned_data['user_type'] == 'student':
+                profile.roll_number = form.cleaned_data.get('roll_number', '')
+                profile.niveau = form.cleaned_data.get('niveau', '')
+                profile.filiere = form.cleaned_data.get('filiere', '')
+            else:  # Pour les enseignants
+                profile.roll_number = ''
+                profile.niveau = ''
+                profile.filiere = ''
+                
             profile.save()
 
             messages.success(request, 'Votre compte a été créé avec succès. Vous pouvez maintenant vous connecter.')
@@ -29,12 +35,10 @@ def signup(request):
         else:
             messages.error(request, 'Veuillez corriger les erreurs ci-dessous.')
     else:
-        user_form = UserForm()
-        profile_form = UserProfileForm()
+        form = UserRegisterForm()
 
     return render(request, 'signup.html', {
-        'user_form': user_form,
-        'profile_form': profile_form
+        'form': form
     })
 
 def login_view(request):

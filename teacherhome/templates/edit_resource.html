@@ -2,21 +2,27 @@
 {% block title %}Modifier une ressource – Plateforme Pédagogique{% endblock %}
 {% block content %}
 <div class="dashboard-container">
-  <header class="page-header">
-    <h1>Modifier la ressource</h1>
-    <p class="welcome">Bonjour {{ user.first_name|default:user.username }}</p>
-  </header>
+  <!-- En-tête de page -->
+  {% include 'partials/page_header.html' with title="Modifier la ressource" welcome_user=user.first_name|default:user.username %}
+  
   <div class="dashboard-main-content">
     <section class="edit-resource-section content-col">
-      <form method="post" enctype="multipart/form-data" class="form upload-form">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary btn-upload">
-          <i class="fas fa-save"></i> Enregistrer les modifications
-        </button>
-        <a href="{% url 'teacher_home' %}" class="btn btn-secondary">Annuler</a>
-      </form>
+      <div class="form-card">
+        <h2><i class="fas fa-edit"></i> Informations de la ressource</h2>
+        <form method="post" enctype="multipart/form-data" class="form upload-form">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-upload">
+              <i class="fas fa-save"></i> Enregistrer les modifications
+            </button>
+            <a href="{% url 'teacher_home' %}" class="btn btn-secondary">
+              <i class="fas fa-times"></i> Annuler
+            </a>
+          </div>
+        </form>
+      </div>
     </section>
   </div>
 </div>
-{% endblock %} 
+{% endblock %}

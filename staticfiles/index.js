@@ -24,7 +24,6 @@ function showRollNumber() {
     document.getElementById("teacherIdSection").style.display = "none";
     header.style.paddingTop = "0px";
     header.style.marginTop ="20px";
-    document.getElementById("teacher_id").innerText = "";
 }
 
 function showTeacherId() {
@@ -33,12 +32,5 @@ function showTeacherId() {
     document.getElementById("rollNumberSection").style.display = "none";
     header.style.paddingTop = "0px";
     header.style.marginTop ="20px";
-    document.getElementById("roll_number").innerText = "";
 }
 
-function deselect(){
-    var sr = document.getElementById("studentRadio")
-    var tr = document.getElementById("teacherRadio")
-    sr.checked = false;
-    tr.checked = false;
-}
