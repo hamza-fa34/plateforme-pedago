@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from login import views as login_views
 from django.conf.urls import handler404, handler403
-from not_found.views import not_found_404
+from not_found.views import custom_404 as not_found_404
 from server.views import csrf_failure
 from django.conf import settings
 from django.conf.urls.static import static

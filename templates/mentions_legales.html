@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Mentions Légales – Plateforme Pédagogique{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">Mentions Légales</h1>
+            
+            <section class="mb-5">
+                <h2 class="h4 mb-3">Éditeur du site</h2>
+                <p>La Plateforme Pédagogique est éditée par :</p>
+                <address>
+                    <strong>Plateforme Pédagogique</strong><br>
+                    Adresse de l'établissement<br>
+                    Code postal - Ville<br>
+                    Téléphone : XX.XX.XX.XX.XX<br>
+                    Email : contact@plateforme-pedagogique.fr
+                </address>
+            </section>
+
+            <section class="mb-5">
+                <h2 class="h4 mb-3">Directeur de la publication</h2>
+                <p>Le directeur de la publication est : [Nom du directeur]</p>
+            </section>
+
+            <section class="mb-5">
+                <h2 class="h4 mb-3">Hébergement</h2>
+                <p>Ce site est hébergé par :</p>
+                <address>
+                    <strong>Nom de l'hébergeur</strong><br>
+                    Adresse de l'hébergeur<br>
+                    Téléphone : XX.XX.XX.XX.XX
+                </address>
+            </section>
+
+            <section class="mb-5">
+                <h2 class="h4 mb-3">Propriété intellectuelle</h2>
+                <p>L'ensemble des éléments constituant le site (textes, images, logos, vidéos, etc.) sont la propriété exclusive de la Plateforme Pédagogique ou font l'objet d'une autorisation d'utilisation.</p>
+                <p>Toute reproduction, représentation, modification, publication, adaptation de tout ou partie des éléments du site est interdite, sauf autorisation écrite préalable.</p>
+            </section>
+
+            <section class="mb-5">
+                <h2 class="h4 mb-3">Protection des données personnelles</h2>
+                <p>Conformément à la loi « informatique et libertés » du 6 janvier 1978 modifiée et au Règlement Général sur la Protection des Données (RGPD), vous disposez d'un droit d'accès, de rectification, de suppression et de portabilité de vos données personnelles.</p>
+                <p>Pour exercer ces droits, veuillez nous contacter à l'adresse email suivante : contact@plateforme-pedagogique.fr</p>
+            </section>
+
+            <section class="mb-5">
+                <h2 class="h4 mb-3">Cookies</h2>
+                <p>Ce site utilise des cookies pour améliorer votre expérience utilisateur. En continuant votre navigation, vous acceptez notre politique en matière de cookies.</p>
+            </section>
+
+            <div class="text-center mt-5">
+                <a href="{% url 'home' %}" class="btn btn-primary">
+                    <i class="fas fa-arrow-left me-2"></i> Retour à l'accueil
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
