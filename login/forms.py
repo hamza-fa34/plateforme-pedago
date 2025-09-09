@@ -52,34 +52,106 @@ class UserForm(forms.ModelForm):
         fields = ['first_name', 'email', 'password']
 
 class UserRegisterForm(UserCreationForm):
-    email = forms.EmailField(required=True)
-    first_name = forms.CharField(required=True, label="Prénom")
-    last_name = forms.CharField(required=True, label="Nom")
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Votre adresse email',
+            'aria-label': 'Adresse email'
+        })
+    )
+    first_name = forms.CharField(
+        required=True,
+        label="Prénom",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Votre prénom',
+            'aria-label': 'Prénom'
+        })
+    )
+    last_name = forms.CharField(
+        required=True,
+        label="Nom",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Votre nom',
+            'aria-label': 'Nom'
+        })
+    )
     user_type = forms.ChoiceField(
         choices=UserProfile.USER_TYPE_CHOICES,
-        widget=forms.RadioSelect,
-        label="Type d'utilisateur"
+        widget=forms.RadioSelect(attrs={
+            'class': 'radio-option'
+        }),
+        label="Type d'utilisateur",
+        required=True
     )
-    filiere = forms.ChoiceField(
-        choices=[('', 'Sélectionnez votre filière')] + list(UserProfile.FILIERE_CHOICES),
-        required=False,
-        label="Filière"
-    )
-    niveau = forms.ChoiceField(
-        choices=[('', 'Sélectionnez votre niveau')] + list(UserProfile.NIVEAU_CHOICES),
-        required=False,
-        label="Niveau d'études"
-    )
+    
+    # Champs pour les étudiants
     roll_number = forms.CharField(
-        max_length=20,
         required=False,
-        label="Numéro d'étudiant"
+        label="Numéro d'étudiant",
+        max_length=20,
+        widget=forms.TextInput(attrs={'class': 'form-control student-field'})
+    )
+    
+    niveau = forms.ChoiceField(
+        choices=UserProfile.NIVEAU_CHOICES,
+        required=False,
+        label="Niveau d'études",
+        widget=forms.Select(attrs={'class': 'form-control student-field'})
+    )
+    
+    filiere = forms.ChoiceField(
+        choices=UserProfile.FILIERE_CHOICES,
+        required=False,
+        label="Filière",
+        widget=forms.Select(attrs={'class': 'form-control student-field'})
+    )
+    
+    # Champs pour les enseignants
+    matricule = forms.CharField(
+        required=False,
+        label="Matricule enseignant",
+        max_length=20,
+        widget=forms.TextInput(attrs={'class': 'form-control teacher-field'})
+    )
+    
+    matieres = forms.MultipleChoiceField(
+        choices=UserProfile.MATIERE_CHOICES,
+        required=False,
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'teacher-field'}),
+        label="Matières enseignées"
     )
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'first_name', 'last_name', 'password1', 'password2')
-
+        fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'password1': forms.PasswordInput(attrs={'class': 'form-control'}),
+            'password2': forms.PasswordInput(attrs={'class': 'form-control'}),
+        }
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        user_type = cleaned_data.get('user_type')
+        
+        if user_type == 'student':
+            if not cleaned_data.get('roll_number'):
+                self.add_error('roll_number', 'Ce champ est obligatoire pour les étudiants')
+            if not cleaned_data.get('niveau'):
+                self.add_error('niveau', 'Veuillez sélectionner votre niveau')
+            if not cleaned_data.get('filiere'):
+                self.add_error('filiere', 'Veuillez sélectionner votre filière')
+        elif user_type == 'teacher':
+            if not cleaned_data.get('matricule'):
+                self.add_error('matricule', 'Le matricule est obligatoire')
+            if not cleaned_data.get('matieres'):
+                self.add_error('matieres', 'Veuillez sélectionner au moins une matière')
+        
+        return cleaned_data
+    
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
@@ -88,13 +160,26 @@ class UserRegisterForm(UserCreationForm):
         
         if commit:
             user.save()
-            UserProfile.objects.create(
-                user=user,
-                user_type=self.cleaned_data['user_type'],
-                filiere=self.cleaned_data.get('filiere', ''),
-                niveau=self.cleaned_data.get('niveau', ''),
-                roll_number=self.cleaned_data.get('roll_number', '')
-            )
+            
+            # Créer ou mettre à jour le profil utilisateur
+            profile, created = UserProfile.objects.get_or_create(user=user)
+            profile.user_type = self.cleaned_data['user_type']
+            
+            if self.cleaned_data['user_type'] == 'student':
+                profile.roll_number = self.cleaned_data['roll_number']
+                profile.niveau = self.cleaned_data['niveau']
+                profile.filiere = self.cleaned_data['filiere']
+                profile.matricule = ''
+                profile.matieres_enseignees = []
+            else:  # Enseignant
+                profile.matricule = self.cleaned_data['matricule']
+                profile.matieres_enseignees = self.cleaned_data['matieres']
+                profile.roll_number = ''
+                profile.niveau = ''
+                profile.filiere = ''
+                
+            profile.save()
+            
         return user
 
 class UserUpdateForm(forms.ModelForm):

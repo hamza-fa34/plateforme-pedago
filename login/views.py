@@ -7,39 +7,49 @@ from .forms import UserForm, ProfileUpdateForm, LoginForm, UserRegisterForm
 
 def signup(request):
     if request.method == 'POST':
-        form = UserRegisterForm(request.POST)
+        # Créer un dictionnaire avec les données du formulaire
+        form_data = request.POST.copy()
+        
+        # Créer le formulaire avec les données du POST
+        form = UserRegisterForm(form_data)
+        
         if form.is_valid():
             # Sauvegarder l'utilisateur et créer le profil
             user = form.save(commit=True)
             
-            # Le profil est créé automatiquement par le formulaire UserRegisterForm
-            # avec les champs de base, on peut ajouter des champs supplémentaires si nécessaire
-            profile = user.userprofile
+            # Connecter automatiquement l'utilisateur après l'inscription
+            user = authenticate(
+                username=form.cleaned_data['username'],
+                password=form.cleaned_data['password1']
+            )
             
-            # Mettre à jour les champs spécifiques au type d'utilisateur
-            profile.user_type = form.cleaned_data['user_type']
-            
-            if form.cleaned_data['user_type'] == 'student':
-                profile.roll_number = form.cleaned_data.get('roll_number', '')
-                profile.niveau = form.cleaned_data.get('niveau', '')
-                profile.filiere = form.cleaned_data.get('filiere', '')
-            else:  # Pour les enseignants
-                profile.roll_number = ''
-                profile.niveau = ''
-                profile.filiere = ''
+            if user is not None:
+                auth_login(request, user)
                 
-            profile.save()
-
-            messages.success(request, 'Votre compte a été créé avec succès. Vous pouvez maintenant vous connecter.')
+                # Rediriger en fonction du type d'utilisateur
+                if user.userprofile.user_type == 'student':
+                    return redirect('studenthome')
+                else:
+                    return redirect('teacher_home')
+            
+            messages.success(request, 'Votre compte a été créé avec succès !')
             return redirect('login')
         else:
-            messages.error(request, 'Veuillez corriger les erreurs ci-dessous.')
+            # Afficher les erreurs de formulaire
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{form.fields[field].label}: {error}" if field in form.fields else error)
     else:
         form = UserRegisterForm()
 
-    return render(request, 'signup.html', {
-        'form': form
-    })
+    # Préparer les données pour le template
+    context = {
+        'form': form,
+        'user_form': form,
+        'profile_form': form
+    }
+    
+    return render(request, 'signup.html', context)
 
 def login_view(request):
     if request.method == 'POST':

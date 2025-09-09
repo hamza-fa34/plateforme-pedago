@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block title %}Inscription - Plateforme Pédagogique{% endblock %}
+
 {% block content %}
 <div class="split-container">
   <div class="split-left">
@@ -8,85 +10,496 @@
     <h1 class="split-title">Plateforme Pédagogique</h1>
     <p class="split-subtitle">Créez votre compte pour accéder à toutes les ressources pédagogiques de la plateforme.</p>
   </div>
+  
   <div class="split-right">
     <div class="form-card">
       <h2>Inscription</h2>
-      <form class="form" action="" method="post" novalidate>
+      
+      {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+      
+      <form method="post" class="form" id="signupForm" novalidate>
         {% csrf_token %}
+        
+        <!-- Champs de base -->
         <div class="form-group">
-          <label for="id_first_name">Nom complet</label>
-          <input type="text" name="first_name" id="id_first_name" class="form-control" placeholder="Votre nom complet" aria-label="Nom complet" value="{{ user_form.first_name.value|default:'' }}" required>
-          {% if user_form.first_name.errors %}
-            <div class="alert alert-error">{{ user_form.first_name.errors.0 }}</div>
+          <label for="{{ form.username.id_for_label }}">Nom d'utilisateur *</label>
+          {{ form.username }}
+          {% if form.username.errors %}
+            <div class="alert alert-error">{{ form.username.errors.0 }}</div>
           {% endif %}
         </div>
+        
         <div class="form-group">
-          <label for="id_email">Adresse email</label>
-          <input type="email" name="email" id="id_email" class="form-control" placeholder="Votre adresse email" aria-label="Adresse email" value="{{ user_form.email.value|default:'' }}" required>
-          {% if user_form.email.errors %}
-            <div class="alert alert-error">{{ user_form.email.errors.0 }}</div>
+          <label for="{{ form.email.id_for_label }}">Email *</label>
+          {{ form.email }}
+          {% if form.email.errors %}
+            <div class="alert alert-error">{{ form.email.errors.0 }}</div>
           {% endif %}
         </div>
+        
+        <div class="form-row">
+          <div class="form-group half-width">
+            <label for="{{ form.first_name.id_for_label }}">Prénom *</label>
+            {{ form.first_name }}
+            {% if form.first_name.errors %}
+              <div class="alert alert-error">{{ form.first_name.errors.0 }}</div>
+            {% endif %}
+          </div>
+          
+          <div class="form-group half-width">
+            <label for="{{ form.last_name.id_for_label }}">Nom *</label>
+            {{ form.last_name }}
+            {% if form.last_name.errors %}
+              <div class="alert alert-error">{{ form.last_name.errors.0 }}</div>
+            {% endif %}
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group half-width">
+            <label for="{{ form.password1.id_for_label }}">Mot de passe *</label>
+            {{ form.password1 }}
+            {% if form.password1.errors %}
+              <div class="alert alert-error">{{ form.password1.errors.0 }}</div>
+            {% endif %}
+          </div>
+          
+          <div class="form-group half-width">
+            <label for="{{ form.password2.id_for_label }}">Confirmer le mot de passe *</label>
+            {{ form.password2 }}
+            {% if form.password2.errors %}
+              <div class="alert alert-error">{{ form.password2.errors.0 }}</div>
+            {% endif %}
+          </div>
+        </div>
+        
+        <!-- Type d'utilisateur -->
         <div class="form-group">
-          <label for="id_password">Mot de passe</label>
-          <input type="password" name="password" id="id_password" class="form-control" placeholder="Créez un mot de passe" aria-label="Mot de passe" required>
-          {% if user_form.password.errors %}
-            <div class="alert alert-error">{{ user_form.password.errors.0 }}</div>
-          {% endif %}
-        </div>
-        <div class="form-group">
-          <label>Vous êtes</label>
-          {% for radio in profile_form.user_type %}
-            <label class="radio-inline">
-              {{ radio.tag }} {{ radio.choice_label }}
-            </label>
-          {% endfor %}
-          {% if profile_form.user_type.errors %}
-            <div class="alert alert-error">{{ profile_form.user_type.errors.0 }}</div>
-          {% endif %}
-        </div>
-        <div class="form-group hidden" id="rollNumberSection">
-          <label for="id_roll_number">Numéro d'étudiant</label>
-          <input type="text" name="roll_number" id="id_roll_number" class="form-control" placeholder="Numéro d'étudiant (si étudiant)" aria-label="Numéro d'étudiant" value="{{ profile_form.roll_number.value|default:'' }}">
-          {% if profile_form.roll_number.errors %}
-            <div class="alert alert-error">{{ profile_form.roll_number.errors.0 }}</div>
-          {% endif %}
-        </div>
-        <div class="form-group hidden" id="niveauSection">
-          <label for="id_niveau">Niveau d'études</label>
-          <select name="niveau" id="id_niveau" class="form-control" aria-label="Niveau d'études">
-            <option value="">Sélectionnez votre niveau</option>
-            {% for value, label in profile_form.niveau.field.choices %}
-              {% if value %}
-                <option value="{{ value }}" {% if profile_form.niveau.value == value %}selected{% endif %}>{{ label }}</option>
-              {% endif %}
+          <label>Type de compte *</label>
+          <div class="radio-group">
+            {% for radio in form.user_type %}
+              <label class="radio-option">
+                {{ radio.tag }}
+                <span class="radio-custom"></span>
+                <span class="radio-label">{{ radio.choice_label }}</span>
+              </label>
             {% endfor %}
-          </select>
-          {% if profile_form.niveau.errors %}
-            <div class="alert alert-error">{{ profile_form.niveau.errors.0 }}</div>
+          </div>
+          {% if form.user_type.errors %}
+            <div class="alert alert-error">{{ form.user_type.errors.0 }}</div>
           {% endif %}
         </div>
-        <div class="form-group hidden" id="filiereSection">
-          <label for="id_filiere">Filière</label>
-          <select name="filiere" id="id_filiere" class="form-control" aria-label="Filière">
-            <option value="">Sélectionnez votre filière</option>
-            {% for value, label in profile_form.filiere.field.choices %}
-              {% if value %}
-                <option value="{{ value }}" {% if profile_form.filiere.value == value %}selected{% endif %}>{{ label }}</option>
+        
+        <!-- Champs spécifiques aux étudiants -->
+        <div id="studentFields" style="display: none;">
+          <div class="form-group">
+            <label for="{{ form.roll_number.id_for_label }}">Numéro d'étudiant *</label>
+            {{ form.roll_number }}
+            {% if form.roll_number.errors %}
+              <div class="alert alert-error">{{ form.roll_number.errors.0 }}</div>
+            {% endif %}
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group half-width">
+              <label for="{{ form.niveau.id_for_label }}">Niveau d'études *</label>
+              {{ form.niveau }}
+              {% if form.niveau.errors %}
+                <div class="alert alert-error">{{ form.niveau.errors.0 }}</div>
               {% endif %}
-            {% endfor %}
-          </select>
-          {% if profile_form.filiere.errors %}
-            <div class="alert alert-error">{{ profile_form.filiere.errors.0 }}</div>
-          {% endif %}
+            </div>
+            
+            <div class="form-group half-width">
+              <label for="{{ form.filiere.id_for_label }}">Filière *</label>
+              {{ form.filiere }}
+              {% if form.filiere.errors %}
+                <div class="alert alert-error">{{ form.filiere.errors.0 }}</div>
+              {% endif %}
+            </div>
+          </div>
         </div>
-        <button type="submit" class="btn btn-primary">S'inscrire</button>
-        <div class="text-center mt-1">
-          <a href="{% url 'login' %}" class="btn btn-secondary">Déjà un compte ? Se connecter ici</a>
+        
+        <!-- Champs spécifiques aux enseignants -->
+        <div id="teacherFields" style="display: none;">
+          <div class="form-group">
+            <label for="{{ form.matricule.id_for_label }}">Matricule enseignant *</label>
+            {{ form.matricule }}
+            {% if form.matricule.errors %}
+              <div class="alert alert-error">{{ form.matricule.errors.0 }}</div>
+            {% endif %}
+          </div>
+          
+          <div class="form-group">
+            <label>Matières enseignées *</label>
+            <div class="checkbox-group">
+              {% for checkbox in form.matieres %}
+                <label class="checkbox-option">
+                  {{ checkbox.tag }}
+                  <span class="checkbox-custom"></span>
+                  <span class="checkbox-label">{{ checkbox.choice_label }}</span>
+                </label>
+              {% endfor %}
+            </div>
+            {% if form.matieres.errors %}
+              <div class="alert alert-error">{{ form.matieres.errors.0 }}</div>
+            {% endif %}
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">S'inscrire</button>
+          <div class="text-center mt-2">
+            <a href="{% url 'login' %}" class="btn btn-link">Déjà un compte ? Se connecter</a>
+          </div>
         </div>
       </form>
     </div>
   </div>
 </div>
-<script src="{% static 'signup.js' %}"></script>
+
+<style>
+  /* Styles de base pour le formulaire */
+  .form-group { margin-bottom: 1rem; }
+  
+  /* Amélioration des champs de formulaire */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  select {
+    width: 100%;
+    padding: 0.75rem;
+    margin: 0.25rem 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  /* Amélioration des boutons radio */
+  .radio-group {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  /* Espacement entre les champs en ligne */
+  .form-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* Largeur des champs en ligne */
+  .half-width {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  /* Styles pour les boutons radio et cases à cocher */
+  .radio-group, .checkbox-group { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 0.5rem; 
+    margin: 0.5rem 0;
+  }
+  
+  .radio-option, .checkbox-option { 
+    display: flex; 
+    align-items: center; 
+    gap: 0.5rem; 
+    cursor: pointer;
+    padding: 0.5rem 0;
+  }
+  
+  .radio-custom, .checkbox-custom {
+    display: inline-block;
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    position: relative;
+    margin-right: 0.5rem;
+  }
+  
+  .checkbox-custom { border-radius: 4px; }
+  
+  input[type="radio"]:checked + .radio-custom::after,
+  input[type="checkbox"]:checked + .checkbox-custom::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #007bff;
+    border-radius: 50%;
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+  
+  input[type="checkbox"]:checked + .checkbox-custom::after {
+    border-radius: 2px;
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+  
+  input[type="radio"], 
+  input[type="checkbox"] { 
+    position: absolute; 
+    opacity: 0; 
+    width: 0; 
+    height: 0; 
+  }
+  
+  /* Styles pour les messages d'alerte */
+  .alert { 
+    padding: 0.5rem; 
+    margin: 0.5rem 0; 
+    border-radius: 4px; 
+    font-size: 0.875rem; 
+  }
+  
+  .alert-error { 
+    background-color: #fee2e2; 
+    color: #b91c1c; 
+    border: 1px solid #fca5a5;
+  }
+  
+  .required { color: #dc2626; }
+  
+  /* Styles pour les champs du formulaire */
+  .form-control {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    margin-top: 0.25rem;
+  }
+  
+  /* Styles pour le bouton de soumission */
+  .btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    text-align: center;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  
+  .btn-primary {
+    background-color: #2563eb;
+    color: white;
+    border: 1px solid #2563eb;
+  }
+  
+  .btn-primary:hover {
+    background-color: #1d4ed8;
+  }
+  
+  .btn-link {
+    color: #2563eb;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+  
+  .btn-link:hover {
+    text-decoration: underline;
+  }
+  
+  /* Mise en page du conteneur */
+  .split-container {
+    display: flex;
+    min-height: 100vh;
+  }
+  
+  .split-left, .split-right {
+    flex: 1;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .form-card {
+    max-width: 500px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 2rem;
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+  
+  @media (max-width: 768px) {
+    .split-container {
+      flex-direction: column;
+    }
+    
+    .split-left, .split-right {
+      padding: 1rem;
+    }
+    
+    .form-card {
+      padding: 1.5rem;
+    }
+  }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('signupForm');
+    const userTypeRadios = document.querySelectorAll('input[name="user_type"]');
+    const studentFields = document.getElementById('studentFields');
+    const teacherFields = document.getElementById('teacherFields');
+    
+    // Fonction pour afficher/masquer les champs selon le type d'utilisateur
+    function toggleUserSpecificFields() {
+        const selectedUserType = document.querySelector('input[name="user_type"]:checked');
+        
+        // Masquer tous les champs spécifiques d'abord
+        if (studentFields) studentFields.style.display = 'none';
+        if (teacherFields) teacherFields.style.display = 'none';
+        
+        // Afficher les champs appropriés selon le type d'utilisateur
+        if (selectedUserType) {
+            if (selectedUserType.value === 'student' && studentFields) {
+                studentFields.style.display = 'block';
+            } else if (selectedUserType.value === 'teacher' && teacherFields) {
+                teacherFields.style.display = 'block';
+            }
+        }
+        
+        // Mettre à jour les champs requis
+        updateFieldRequirements(selectedUserType ? selectedUserType.value : '');
+    }
+    
+    // Fonction pour mettre à jour les champs requis
+    function updateFieldRequirements(userType) {
+        // Réinitialiser tous les champs requis
+        const allRequiredFields = form.querySelectorAll('[required]');
+        allRequiredFields.forEach(field => {
+            field.removeAttribute('required');
+            field.removeAttribute('aria-required');
+        });
+        
+        // Marquer les champs de base comme requis
+        const baseFields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2'];
+        baseFields.forEach(fieldName => {
+            const field = form.querySelector(`[name="${fieldName}"]`);
+            if (field) {
+                field.required = true;
+                field.setAttribute('aria-required', 'true');
+            }
+        });
+        
+        // Marquer les champs spécifiques comme requis selon le type d'utilisateur
+        if (userType === 'student') {
+            const studentFields = ['roll_number', 'niveau', 'filiere'];
+            studentFields.forEach(fieldName => {
+                const field = form.querySelector(`[name="${fieldName}"]`);
+                if (field) {
+                    field.required = true;
+                    field.setAttribute('aria-required', 'true');
+                }
+            });
+        } else if (userType === 'teacher') {
+            const teacherFields = ['matricule'];
+            teacherFields.forEach(fieldName => {
+                const field = form.querySelector(`[name="${fieldName}"]`);
+                if (field) {
+                    field.required = true;
+                    field.setAttribute('aria-required', 'true');
+                }
+            });
+        }
+    }
+    
+    // Ajouter des écouteurs d'événements
+    if (userTypeRadios.length > 0) {
+        userTypeRadios.forEach(radio => {
+            radio.addEventListener('change', toggleUserSpecificFields);
+        });
+        
+        // Déclencher une première vérification
+        toggleUserSpecificFields();
+    }
+    
+    // Validation personnalisée pour la soumission du formulaire
+    if (form) {
+        form.addEventListener('submit', function(event) {
+            const selectedUserType = document.querySelector('input[name="user_type"]:checked');
+            let isValid = true;
+            
+            // Réinitialiser les messages d'erreur
+            const errorMessages = form.querySelectorAll('.field-error');
+            errorMessages.forEach(el => el.remove());
+            
+            // Valider le type d'utilisateur
+            if (!selectedUserType) {
+                const userTypeContainer = document.querySelector('.radio-group');
+                if (userTypeContainer) {
+                    const errorElement = document.createElement('div');
+                    errorElement.className = 'alert alert-error field-error';
+                    errorElement.textContent = 'Veuillez sélectionner un type de compte';
+                    userTypeContainer.parentNode.insertBefore(errorElement, userTypeContainer.nextSibling);
+                    isValid = false;
+                }
+            }
+            
+            // Validation spécifique pour les enseignants
+            if (selectedUserType && selectedUserType.value === 'teacher') {
+                const matieresCheckboxes = form.querySelectorAll('input[name="matieres"]:checked');
+                if (matieresCheckboxes.length === 0) {
+                    const matieresContainer = document.querySelector('.checkbox-group');
+                    if (matieresContainer) {
+                        const errorElement = document.createElement('div');
+                        errorElement.className = 'alert alert-error field-error';
+                        errorElement.textContent = 'Veuillez sélectionner au moins une matière';
+                        matieresContainer.parentNode.insertBefore(errorElement, matieresContainer.nextSibling);
+                        isValid = false;
+                    }
+                }
+            }
+            
+            // Validation des champs requis
+            const requiredFields = form.querySelectorAll('[required]');
+            requiredFields.forEach(field => {
+                if (!field.value && field.type !== 'radio' && field.type !== 'checkbox') {
+                    const fieldContainer = field.closest('.form-group');
+                    if (fieldContainer) {
+                        const errorElement = document.createElement('div');
+                        errorElement.className = 'alert alert-error field-error';
+                        errorElement.textContent = 'Ce champ est obligatoire';
+                        fieldContainer.appendChild(errorElement);
+                        isValid = false;
+                    }
+                }
+            });
+            
+            // Empêcher la soumission si le formulaire n'est pas valide
+            if (!isValid) {
+                event.preventDefault();
+                
+                // Faire défiler jusqu'au premier champ avec erreur
+                const firstError = form.querySelector('.field-error');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                
+                return false;
+            }
+            
+            return true;
+        });
+    }
+});
+</script>
 {% endblock %}
