@@ -90,9 +90,18 @@ def studentHome(request):
             if not Notification.objects.filter(user=request.user, message=notif_msg).exists():
                 create_notification(request.user, notif_msg)
 
+    # Récupérer les IDs des ressources favorites de l'utilisateur
+    favorite_ids = list(Favorite.objects.filter(user=request.user).values_list('resource_id', flat=True))
+    print(f"DEBUG - Nombre de favoris trouvés: {len(favorite_ids)}")
+    print(f"DEBUG - IDs des favoris: {favorite_ids}")
+    print(f"DEBUG - Nombre de recommandations: {len(recommendations) if recommendations else 0}")
+    if recommendations:
+        print(f"DEBUG - IDs des ressources recommandées: {[r.id for r in recommendations]}")
+
     context = {
         'profile': profile,
         'recommendations': recommendations,
+        'favorite_ids': favorite_ids,  # Ajout des IDs des favoris au contexte
     }
     return render(request, 'studenthome.html', context)
 

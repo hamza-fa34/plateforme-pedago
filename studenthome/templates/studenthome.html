@@ -14,7 +14,7 @@
       <h2 id="recommendations-heading"><i class="fas fa-magic"></i> Spécialement pour vous</h2>
     </header>
     {% if recommendations %}
-      {% include 'partials/resource_table.html' with files_data=recommendations is_teacher_view=False %}
+      {% include 'partials/resource_table.html' with files_data=recommendations is_teacher_view=False favorite_ids=favorite_ids %}
     {% else %}
       <div class="text-center empty-state">
         <i class="fas fa-seedling fa-3x text-muted mb-3" style="font-size: 3rem; margin-bottom: 1rem;"></i>

@@ -1,0 +1,272 @@
+document.addEventListener('DOMContentLoaded', function() {
+    // Configuration
+    const CONFIG = {
+        notification: {
+            duration: 3000,
+            animationDuration: 300,
+            styles: {
+                position: 'fixed',
+                top: '20px',
+                right: '20px',
+                zIndex: '9999',
+                padding: '15px 20px',
+                borderRadius: '4px',
+                boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+                maxWidth: '300px',
+                opacity: '0',
+                transition: 'opacity 0.3s ease-in-out'
+            },
+            types: {
+                success: {
+                    bgColor: '#d4edda',
+                    color: '#155724',
+                    border: '1px solid #c3e6cb'
+                },
+                info: {
+                    bgColor: '#d1ecf1',
+                    color: '#0c5460',
+                    border: '1px solid #bee5eb'
+                },
+                danger: {
+                    bgColor: '#f8d7da',
+                    color: '#721c24',
+                    border: '1px solid #f5c6cb'
+                }
+            }
+        },
+        favorite: {
+            activeClass: 'favorite',
+            activeColor: '#dc3545'
+        }
+    };
+
+    // Éléments du DOM
+    const body = document.body;
+    const toggleFavoriteUrl = body.dataset.toggleFavoriteUrl;
+    const csrfToken = body.dataset.csrfToken;
+
+    // Vérification des éléments requis
+    if (!toggleFavoriteUrl || !csrfToken) {
+        console.error('Configuration manquante: CSRF token ou URL de toggle des favoris non défini');
+        return;
+    }
+
+    /**
+     * Affiche une notification à l'utilisateur
+     * @param {string} message - Le message à afficher
+     * @param {string} type - Le type de notification (success, info, danger)
+     */
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type} notification`;
+        notification.setAttribute('role', 'alert');
+        notification.textContent = message;
+        
+        // Application des styles
+        Object.assign(notification.style, CONFIG.notification.styles, {
+            backgroundColor: CONFIG.notification.types[type]?.bgColor || CONFIG.notification.types.info.bgColor,
+            color: CONFIG.notification.types[type]?.color || CONFIG.notification.types.info.color,
+            border: CONFIG.notification.types[type]?.border || CONFIG.notification.types.info.border
+        });
+        
+        document.body.appendChild(notification);
+        
+        // Animation d'apparition
+        requestAnimationFrame(() => {
+            notification.style.opacity = '1';
+        });
+        
+        // Disparaît après la durée définie
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            setTimeout(() => {
+                notification.remove();
+            }, CONFIG.notification.animationDuration);
+        }, CONFIG.notification.duration);
+    }
+
+    /**
+     * Gère le clic sur un bouton favori
+     * @param {Event} event - L'événement de clic
+     */
+    async function handleFavoriteClick(event) {
+        const button = event.target.closest('.favorite-btn');
+        if (!button) return;
+        
+        event.preventDefault();
+        event.stopPropagation();
+
+        const resourceId = button.dataset.resourceId;
+        const icon = button.querySelector('i.fa-heart');
+        
+        if (!resourceId || !icon) {
+            console.error('Bouton favori mal configuré');
+            return;
+        }
+
+        const isCurrentlyFavorite = icon.classList.contains(CONFIG.favorite.activeClass);
+        
+        // Animation de feedback immédiat
+        animateButton(icon);
+
+        try {
+            button.disabled = true;
+            const success = await toggleFavorite(resourceId, !isCurrentlyFavorite);
+            
+            if (success) {
+                updateFavoriteUI(icon, !isCurrentlyFavorite);
+                showNotification(
+                    isCurrentlyFavorite ? 'Retiré des favoris' : 'Ajouté aux favoris',
+                    isCurrentlyFavorite ? 'info' : 'success'
+                );
+            }
+        } catch (error) {
+            console.error('Erreur lors de la modification du favori:', error);
+            showNotification('Erreur de connexion au serveur', 'danger');
+            updateFavoriteUI(icon, isCurrentlyFavorite); // Annuler le changement visuel
+        } finally {
+            button.disabled = false;
+        }
+    }
+
+    /**
+     * Anime le bouton lors du clic
+     * @param {HTMLElement} icon - L'icône à animer
+     */
+    function animateButton(icon) {
+        if (!icon) return;
+        
+        icon.style.transition = 'all 0.3s ease';
+        icon.style.transform = 'scale(1.2)';
+        
+        setTimeout(() => {
+            icon.style.transform = 'scale(1)';
+        }, 300);
+    }
+
+    /**
+     * Met à jour l'interface utilisateur du bouton favori
+     * @param {HTMLElement} icon - L'icône à mettre à jour
+     * @param {boolean} isFavorite - Si l'élément est un favori
+     */
+    function updateFavoriteUI(icon, isFavorite) {
+        if (!icon) return;
+        
+        if (isFavorite) {
+            icon.classList.add(CONFIG.favorite.activeClass);
+            icon.style.color = CONFIG.favorite.activeColor;
+        } else {
+            icon.classList.remove(CONFIG.favorite.activeClass);
+            icon.style.color = ''; // Réinitialiser à la valeur par défaut
+        }
+    }
+
+    /**
+     * Bascule l'état d'un favori via une requête AJAX
+     * @param {string} resourceId - L'ID de la ressource
+     * @param {boolean} favorite - Si la ressource doit être ajoutée ou retirée des favoris
+     * @returns {Promise<boolean>} - True si l'opération a réussi
+     */
+    async function toggleFavorite(resourceId, favorite) {
+        const formData = new URLSearchParams();
+        formData.append('resource_id', resourceId);
+
+        try {
+            const response = await fetch(toggleFavoriteUrl, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: formData,
+                credentials: 'same-origin'
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP! Statut: ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            if (!data.success) {
+                throw new Error(data.error || 'Échec du changement de statut de favori');
+            }
+
+            return data.success;
+        } catch (error) {
+            console.error('Erreur lors de la requête AJAX:', error);
+            throw error;
+        }
+    }
+
+    // Délégation d'événements pour gérer les clics sur les boutons de favori
+    document.addEventListener('click', handleFavoriteClick);
+    
+    // Log de débogage
+    console.log('Initialisation du script favorites.js');
+    console.log('URL de toggle des favoris:', toggleFavoriteUrl);
+    console.log('CSRF Token:', csrfToken ? 'Présent' : 'Manquant');
+    
+    // Vérifier les boutons de favori
+    const favoriteButtons = document.querySelectorAll('.favorite-btn');
+    console.log(`Nombre de boutons de favori trouvés: ${favoriteButtons.length}`);
+    
+    // Vérifier les cœurs de favori
+    const favoriteIcons = document.querySelectorAll('.fa-heart.favorite');
+    console.log(`Nombre de cœurs de favori actifs: ${favoriteIcons.length}`);
+
+    // Ajout des styles CSS de manière sécurisée
+    function addStyles() {
+        // Vérifier si le style existe déjà avant d'ajouter
+        if (document.querySelector('style#favorites-styles')) {
+            return; // Ne pas ajouter le style s'il existe déjà
+        }
+
+        const style = document.createElement('style');
+        style.id = 'favorites-styles';
+        
+        // Création des styles de manière statique
+        const styles = [
+            '.favorite { color: ' + CONFIG.favorite.activeColor + ' !important; }',
+            
+            // Styles de base pour les notifications
+            '.notification {',
+            '    padding: ' + CONFIG.notification.styles.padding + ';',
+            '    border-radius: ' + CONFIG.notification.styles.borderRadius + ';',
+            '    box-shadow: ' + CONFIG.notification.styles.boxShadow + ';',
+            '    max-width: ' + CONFIG.notification.styles.maxWidth + ';',
+            '    position: ' + CONFIG.notification.styles.position + ';',
+            '    top: ' + CONFIG.notification.styles.top + ';',
+            '    right: ' + CONFIG.notification.styles.right + ';',
+            '    z-index: ' + CONFIG.notification.styles.zIndex + ';',
+            '    opacity: 0;',
+            '    transition: ' + CONFIG.notification.styles.transition + ';',
+            '}',
+            
+            // Styles spécifiques aux types de notification
+            '.alert-success {',
+            '    background-color: ' + CONFIG.notification.types.success.bgColor + ';',
+            '    color: ' + CONFIG.notification.types.success.color + ';',
+            '    border: ' + CONFIG.notification.types.success.border + ';',
+            '}',
+            
+            '.alert-info {',
+            '    background-color: ' + CONFIG.notification.types.info.bgColor + ';',
+            '    color: ' + CONFIG.notification.types.info.color + ';',
+            '    border: ' + CONFIG.notification.types.info.border + ';',
+            '}',
+            
+            '.alert-danger {',
+            '    background-color: ' + CONFIG.notification.types.danger.bgColor + ';',
+            '    color: ' + CONFIG.notification.types.danger.color + ';',
+            '    border: ' + CONFIG.notification.types.danger.border + ';',
+            '}'
+        ];
+        
+        style.textContent = styles.join('\n');
+        document.head.appendChild(style);
+    }
+    
+    // Appeler la fonction pour ajouter les styles
+    addStyles();
+});

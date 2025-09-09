@@ -153,6 +153,7 @@ STATICFILES_FINDERS = [
 
 STATICFILES_DIRS = [
     BASE_DIR / "server" / "static",
+    BASE_DIR / "studenthome" / "static",
 ]
 
 # Default primary key field type

@@ -3,6 +3,15 @@
 
 {% block title %}Ressources – Plateforme Pédagogique{% endblock %}
 
+{% block body_data %}
+  data-toggle-favorite-url="{% url 'toggle_favorite' %}"
+  data-csrf-token="{{ csrf_token }}"
+{% endblock %}
+
+{% block extra_body %}
+  <script src="{% static 'studenthome/favorites.js' %}"></script>
+{% endblock %}
+
 {% block content %}
 <div class="dashboard-container">
   <!-- En-tête de page -->
